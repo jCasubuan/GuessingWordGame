@@ -1,0 +1,14 @@
+C:\Users\jcasu\source\repos\GuessingWordGame\bin\Debug\net8.0\GuessingWordGame.exe
+C:\Users\jcasu\source\repos\GuessingWordGame\bin\Debug\net8.0\GuessingWordGame.deps.json
+C:\Users\jcasu\source\repos\GuessingWordGame\bin\Debug\net8.0\GuessingWordGame.runtimeconfig.json
+C:\Users\jcasu\source\repos\GuessingWordGame\bin\Debug\net8.0\GuessingWordGame.dll
+C:\Users\jcasu\source\repos\GuessingWordGame\bin\Debug\net8.0\GuessingWordGame.pdb
+C:\Users\jcasu\source\repos\GuessingWordGame\obj\Debug\net8.0\GuessingWordGame.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jcasu\source\repos\GuessingWordGame\obj\Debug\net8.0\GuessingWordGame.AssemblyInfoInputs.cache
+C:\Users\jcasu\source\repos\GuessingWordGame\obj\Debug\net8.0\GuessingWordGame.AssemblyInfo.cs
+C:\Users\jcasu\source\repos\GuessingWordGame\obj\Debug\net8.0\GuessingWordGame.csproj.CoreCompileInputs.cache
+C:\Users\jcasu\source\repos\GuessingWordGame\obj\Debug\net8.0\GuessingWordGame.dll
+C:\Users\jcasu\source\repos\GuessingWordGame\obj\Debug\net8.0\refint\GuessingWordGame.dll
+C:\Users\jcasu\source\repos\GuessingWordGame\obj\Debug\net8.0\GuessingWordGame.pdb
+C:\Users\jcasu\source\repos\GuessingWordGame\obj\Debug\net8.0\GuessingWordGame.genruntimeconfig.cache
+C:\Users\jcasu\source\repos\GuessingWordGame\obj\Debug\net8.0\ref\GuessingWordGame.dll

@@ -27,9 +27,9 @@ namespace GuessingWordGame
 
             Console.WriteLine();
 
-            string wordToGuess = "supercalifragilisticexpialidocious"; // the wordToGuess is interchangeable
+            string wordToGuess = "supercalifragilisticexpialidocious"; // pwede to mabago
             char[] guessedWord = new char[wordToGuess.Length];
-            int playerLives = 3; // the lives is also interchangeable
+            int playerLives = 3; // pwede rin to mabago 
 
             for (int i = 0; i < guessedWord.Length; i++)
             {
@@ -48,10 +48,10 @@ namespace GuessingWordGame
 
                 if (string.IsNullOrEmpty(inputLetter))
                 {
-                    Console.WriteLine("Your input cannot be empty. Please enter a letter.");
+                    Console.WriteLine("Your input cannot be empty! Please enter a letter.");
                     Console.WriteLine();
                     continue;
-                    // error handling for empty letter input
+                    // bawal empty input
 
                 }
 
@@ -60,16 +60,16 @@ namespace GuessingWordGame
                     Console.WriteLine("Not counted! Please enter a single letter only.");
                     Console.WriteLine();
                     continue;
-                    // error handling for multiple char/string input
+                    // bawal maraming characters
 
                 }
 
                 if (!char.IsLetter(inputLetter[0]))
                 {
-                    Console.WriteLine("Oops, only letters are acceptable. Any symbols and numbers are not allowed.");
+                    Console.WriteLine("Oops, only letters are acceptable! Any symbols and numbers are not allowed.");
                     Console.WriteLine();
                     continue;
-                    // error handling for symbol and number input
+                    // bawal numbers at symbols
 
                 }
 
@@ -94,7 +94,7 @@ namespace GuessingWordGame
                     {
                         Console.WriteLine("Incorrect guess! Please try again.");
                         Console.WriteLine();
-                        // output error if the user input is incorrect
+                        // print this pag mali input 
 
                     }
                 }
@@ -103,7 +103,7 @@ namespace GuessingWordGame
                 {
                     Console.WriteLine($"Congratulations, {userName}! You won!!!");
                     return;
-                    // prints if the user input is correct
+                    // prints this pag tugma sa wordToGuess
 
                 }
 

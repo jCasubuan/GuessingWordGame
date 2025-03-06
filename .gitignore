@@ -1,0 +1,10 @@
+# Visual Studio files
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+*.sln.docstates
+# Ignore .gitattributes if you don't want it
+.gitattributes

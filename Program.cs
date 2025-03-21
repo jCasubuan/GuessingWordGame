@@ -2,7 +2,7 @@
 
 namespace GuessingWordGame
 {
-    internal class Program
+     public class Program
     {
         static void Main(string[] args)
         {
@@ -10,20 +10,7 @@ namespace GuessingWordGame
             Console.WriteLine("_______________________________________________________" + Environment.NewLine);
             // for separator
 
-            string userName;
-            do
-            {
-                Console.Write("Before we start, please enter your preferred username: "); // required username
-                userName = Console.ReadLine()?.Trim();
-
-                if (string.IsNullOrEmpty(userName))
-                {
-                    Console.WriteLine("Username cannot be empty! Please try again.");
-                    Console.WriteLine();
-                    // error handling for empty username input
-                }
-            }
-            while (string.IsNullOrEmpty(userName));
+            string userName = GetUserName("Before we start, please enter your preferred username: ");
 
             Console.WriteLine();
 
@@ -39,17 +26,15 @@ namespace GuessingWordGame
             while (playerLives > 0)
             {
                 Console.WriteLine($"Your lives remaining: {playerLives}"); // prints the playerLives
-                Console.WriteLine("Word to guess: " + new string(guessedWord)); // prints the wordToGuess
+                Console.WriteLine("Word to guess: " + new string(guessedWord)); // prints the wordToGuess as an " _ "
                 Console.WriteLine();
-                Console.WriteLine("Guess a letter: ");
 
-                string inputLetter = Console.ReadLine()?.Trim().ToLower();
-                Console.WriteLine();
+                Console.WriteLine("Guess a letter: ");
+                string inputLetter = Console.ReadLine()?.Trim().ToLower();                
 
                 if (string.IsNullOrEmpty(inputLetter))
                 {
-                    Console.WriteLine("Your input cannot be empty! Please enter a letter.");
-                    Console.WriteLine();
+                    UserEmptyInput();
                     continue;
                     // bawal empty input
 
@@ -57,8 +42,7 @@ namespace GuessingWordGame
 
                 if (inputLetter.Length != 1)
                 {
-                    Console.WriteLine("Not counted! Please enter a single letter only.");
-                    Console.WriteLine();
+                    ReadOnlySingleChar();
                     continue;
                     // bawal maraming characters
 
@@ -66,8 +50,7 @@ namespace GuessingWordGame
 
                 if (!char.IsLetter(inputLetter[0]))
                 {
-                    Console.WriteLine("Oops, only letters are acceptable! Any symbols and numbers are not allowed.");
-                    Console.WriteLine();
+                    CheckForLetterInput();
                     continue;
                     // bawal numbers at symbols
 
@@ -114,5 +97,44 @@ namespace GuessingWordGame
             // prints if the user uses all their lives without guessing the right word
 
         }
+
+        public static string GetUserName(string userInput)
+        {
+            string userName;
+            do
+            {
+                Console.Write(userInput);
+                userName = Console.ReadLine()?.Trim();
+
+                if (string.IsNullOrEmpty(userName))
+                {
+                    Console.WriteLine("Username cannot be empty! Please try again.");
+                    Console.WriteLine();
+
+                }
+            }
+            while (string.IsNullOrEmpty(userName));
+
+            return userName;
+        }
+
+        public static void UserEmptyInput()
+        {
+            Console.WriteLine("Your input cannot be empty! Please enter a letter.");
+            Console.WriteLine();
+        }
+
+        public static void ReadOnlySingleChar()
+        {
+            Console.WriteLine("Not counted! Please enter a single letter only.");
+            Console.WriteLine();
+        }
+
+        public static void CheckForLetterInput()
+        {
+            Console.WriteLine("Oops, only letters are acceptable! Any symbols and numbers are not allowed.");
+            Console.WriteLine();
+        }
+
     }
 }

@@ -14,7 +14,7 @@ namespace GuessingWordGame
             string userName = GetUserName("Before we start, please enter your preferred username: "); // method calling
             Console.WriteLine();
 
-            string wordToGuess = "Hippopotomonstrosesquippedaliophobia"; // pwede to mabago
+            string wordToGuess = "supercalifragilisticexpialidocious"; // pwede to mabago
             int playerLives = 3; // pwede rin to mabago 
 
             char[] guessedWord = InitializeGuessedWord(wordToGuess); // method calling
@@ -54,49 +54,26 @@ namespace GuessingWordGame
                 }
 
                 char guessedLetter = inputLetter[0];
-                //bool correctGuess = false;
-
-                //for (int i = 0; i < wordToGuess.Length; i++)
-                //{
-                //    if (wordToGuess[i] == guessedLetter)
-                //    {
-                //        guessedWord[i] = guessedLetter;
-                //        correctGuess = true;
-                //        // prints the correct corresponding letter and its position from the wordToGuess
-
-                //    }
-                //}
-
-                bool correctGuess = ProcessGuess(wordToGuess, guessedWord, guessedLetter);
+                bool correctGuess = ProcessGuess(wordToGuess, guessedWord, guessedLetter); // method calling
 
                 if (!correctGuess)
                 {
-                    playerLives--;
-                    if (playerLives > 0)
-                    {
-                        Console.WriteLine("INCORRECT GUESS! Please try again.");
-                        Console.WriteLine();
-                        // print this pag mali input 
-
-                    }
+                    playerLives = ValidateUserInput(playerLives); // method calling
                 }
 
                 if (new string(guessedWord) == wordToGuess)
                 {
-                    Console.WriteLine($"CONGRATULATIONS, {userName}! You won!!!");
-                    Console.WriteLine($"The word was: {wordToGuess}");
+                    DisplayWinMessage(userName, wordToGuess);
                     return;
                     // prints this pag tugma sa wordToGuess
-                    Console.ReadKey();
 
                 }
 
 
             }
 
-            Console.WriteLine($"GAME OVER! The word was: {wordToGuess}");
-            // prints if the user uses all their lives without guessing the right word
-            Console.ReadKey();
+            ShowLoseMessage(userName, wordToGuess); // method calling
+            // prints if the user uses all their lives without guessing the right word           
 
         }
 
@@ -166,6 +143,32 @@ namespace GuessingWordGame
             Console.WriteLine("OOPS, only letters are acceptable! Any symbols and numbers are not allowed.");
             Console.WriteLine();
         }
+
+        public static int ValidateUserInput(int playerLives)
+        {
+            playerLives--;
+            if (playerLives > 0)
+            {
+                Console.WriteLine("INCORRECT GUESS! Please try again.");
+                Console.WriteLine();
+                // print this pag mali input 
+
+            }
+            return playerLives;
+        }
+
+        public static void DisplayWinMessage(string userName, string wordToGuess)
+        {
+            Console.WriteLine($"CONGRATULATIONS, {userName}! You won!!!");
+            Console.WriteLine($"The word was: {wordToGuess}");
+        }
+
+        public static void ShowLoseMessage(string userName, string wordToGuess)
+        {
+            Console.WriteLine($"GAME OVER! The word was: {wordToGuess}");
+            Console.WriteLine($"Better luck next time, {userName}.");
+        }
+
 
     }
 }

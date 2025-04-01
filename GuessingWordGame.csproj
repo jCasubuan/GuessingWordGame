@@ -7,4 +7,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="GuessingGame_BusinessLogic\**" />
+    <EmbeddedResource Remove="GuessingGame_BusinessLogic\**" />
+    <None Remove="GuessingGame_BusinessLogic\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="GuessingGame_BusinessLogic\GuessingGame_BusinessLogic.csproj" />
+  </ItemGroup>
+
 </Project>

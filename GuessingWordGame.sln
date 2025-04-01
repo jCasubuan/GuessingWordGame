@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuessingWordGame", "GuessingWordGame.csproj", "{5D8C26AD-7EB6-43F5-8D75-032844A2091D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GuessingWordGame", "GuessingWordGame.csproj", "{5D8C26AD-7EB6-43F5-8D75-032844A2091D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuessingGame_BusinessLogic", "GuessingGame_BusinessLogic\GuessingGame_BusinessLogic.csproj", "{ED80FC29-01A7-4BCA-831B-486BAF84BFA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{5D8C26AD-7EB6-43F5-8D75-032844A2091D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D8C26AD-7EB6-43F5-8D75-032844A2091D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D8C26AD-7EB6-43F5-8D75-032844A2091D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED80FC29-01A7-4BCA-831B-486BAF84BFA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED80FC29-01A7-4BCA-831B-486BAF84BFA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED80FC29-01A7-4BCA-831B-486BAF84BFA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED80FC29-01A7-4BCA-831B-486BAF84BFA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

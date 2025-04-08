@@ -6,14 +6,78 @@ namespace GuessingWordGame
 {
     public class Program
     {
+        static bool accountSaved = false;
+
         static void Main(string[] args)
         {
             DisplayWelcomeMessage(); // method calling
 
-            string userName = GetUserName("Before we start, please enter your preferred username: "); // method calling
-            Console.WriteLine($"\nHello, {userName}! Let's start the game!");
-            Console.WriteLine();
+            string userName = string.Empty;
 
+            bool running = true;
+            while (running)
+            {
+                Console.WriteLine("[1] Login ");
+                Console.WriteLine("[2] Register ");
+                Console.WriteLine("[3] Leaderboards ");
+                Console.WriteLine("[4] Exit\n");
+                string optionsInput = AcceptNonEmptyInput("Choose an option: ");
+                Console.WriteLine();
+
+                switch (optionsInput)
+                {
+                    case "1":
+                        HandleLogin();
+                        break;
+
+                    case "2":
+                        HandleRegistration();
+                        break;
+
+                    case "3":
+                        HandleLeaderBoards();
+                        break;
+
+                    case "4":
+                        if (ConfirmExit())
+                        {
+                            Console.WriteLine("\nExiting the game...");
+                            running = false;
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nReturning to main menu...\n");
+                        }
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid input. Please choose from 1 to 4.\n");
+                        break;
+                }
+            }
+
+        static void DisplayWelcomeMessage()
+        {
+            Console.WriteLine("Welcome to my C# version of Hangman. Hope you like it!");
+            Console.WriteLine("_______________________________________________________" + Environment.NewLine);
+        }
+
+        static void HandleLogin()
+        {
+            Console.WriteLine("=====Login=====");
+            string userName = AcceptNonEmptyInput("Enter Username: ");
+            string passWord = AcceptNonEmptyInput("Enter Password: ");
+            Console.WriteLine($"\nWelcome, {userName}! Let's start the game\n");
+            bool wantsToPlay = StartGame(userName);
+
+                if (wantsToPlay)
+                {
+                    Console.WriteLine("Returning to main menu...\n");
+                }
+        }
+
+        static bool StartGame(string userName)
+        {
             string[] wordsToGuess = GuessingGameProcess.GetWords(); // business logic
             int totalLevel = GuessingGameProcess.GetTotalLevel(); // business logic
             int points = GuessingGameProcess.GetPoints(); // business logic
@@ -22,10 +86,10 @@ namespace GuessingWordGame
             {
                 Console.WriteLine($"LEVEL {level + 1}/{totalLevel}");
 
-                int playerLives = 3;
-                
+                int playerLives = 7;
+
                 string wordToGuess = wordsToGuess[level];
-                bool guessedCorrectly = false;      
+                bool guessedCorrectly = false;
 
                 while (!guessedCorrectly)
                 {
@@ -33,25 +97,24 @@ namespace GuessingWordGame
 
                     if (!guessedCorrectly)
                     {
-                        Console.Write("\nDo you want to try again? (yes/no): ");
-                        string tryAgain = GetYesNoInput();
-                        Console.WriteLine();
-                        
-                        
-                        if (tryAgain == "no")
+                            Console.Write("\nDo you want to try again? (yes/no): ");
+                            string tryAgain = YesNoConfirmation("") ? "yes" : "no";
+                            Console.WriteLine();
+
+                            if (tryAgain == "no")
                         {
                             if (level == 0)
                             {
                                 ExitOnFirstTry(points, userName); // method calling
-                                return;
+                                
                             }
                             else
                             {
-                                ExitMidGameLosing(points); // method calling
-                                return;
+                                ExitMidGameLosing(points); // method calling                               
                             }
-                        }
-  
+                                return false; // ← return to main menu
+                            }
+
                         playerLives = 3; // Reset lives if they choose to try again
                     }
                 }
@@ -60,38 +123,32 @@ namespace GuessingWordGame
                 {
                     if (!HandleLevelProgression(ref points, level, totalLevel))
                     {
-                        return; // Exit the game if the player chooses not to continue
+                            return false; // ← return to main menu
                     }
                 }
             }
-           
+
             EndGameMessage(userName); // Game completed successfully
+            return false; // After full game completion, return to menu
         }
+    }
 
-
-
-        static void DisplayWelcomeMessage()
+        static string AcceptNonEmptyInput(string displayText)
         {
-            Console.WriteLine("Welcome to my C# version of Hangman. Hope you like it!");
-            Console.WriteLine("_______________________________________________________" + Environment.NewLine);
-        }
-
-        public static string GetUserName(string displayText)
-        {
-            string userName;
+            string userInput;
             do
             {
                 Console.Write(displayText);
-                userName = Console.ReadLine()?.Trim();
+                userInput = Console.ReadLine()?.Trim();
 
-                if (string.IsNullOrEmpty(userName))
+                if (string.IsNullOrEmpty(userInput))
                 {
-                    Console.WriteLine("Username CANNOT be empty! Please try again.\n");
+                    Console.WriteLine("Your input CANNOT be empty! Please try again.\n");
                 }
             }
-            while (string.IsNullOrEmpty(userName));
+            while (string.IsNullOrEmpty(userInput));
 
-            return userName;
+            return userInput;
         }
 
         public static bool PlayLevel(string userName, string wordToGuess, ref int playerLives)
@@ -197,29 +254,6 @@ namespace GuessingWordGame
             Console.WriteLine();
         }
 
-        public static string GetYesNoInput()
-        {
-            while (true)
-            {
-                string input = Console.ReadLine()?.Trim().ToLower();
-
-                if (string.IsNullOrEmpty(input))
-                {
-                    Console.WriteLine("Input cannot be empty! Please enter 'yes' or 'no'.");
-                    Console.WriteLine();
-                    continue;
-                }
-
-                if (input == "yes" || input == "no")
-                {
-                    return input;
-                }
-
-                Console.WriteLine("Invalid input! Please enter only 'yes' or 'no'.");
-                Console.WriteLine();
-            }
-        }
-
         public static void ExitOnFirstTry(int points, string userName)
         {
             Console.WriteLine("You gave up on the first level.");
@@ -231,7 +265,7 @@ namespace GuessingWordGame
         {
             Console.WriteLine("You have decided to end the game midway, but why?");
             Console.WriteLine($"Your total score: {GuessingGameProcess.GetPoints()} points.");
-            Console.WriteLine("Remember, winners never quit, and quitters never win. ");
+            Console.WriteLine("Remember, winners never quit, and quitters never win.\n");
         }
 
         static bool HandleLevelProgression(ref int points, int level, int totalLevel)
@@ -242,18 +276,18 @@ namespace GuessingWordGame
 
             if (level < totalLevel - 1)
             {
-                Console.Write("Do you want to continue to the next level? (yes/no): ");
-                string continueGame = GetYesNoInput(); // method calling
+                bool continueGame = YesNoConfirmation("Do you want to continue to the next level? (yes/no): ");
                 Console.WriteLine();
 
-                if (continueGame == "no")
+
+                if (!continueGame)
                 {
                     Console.WriteLine($"Your total score: {GuessingGameProcess.GetPoints()} points.");
-                    Console.WriteLine("Thanks for playing!");
-                    return false;  // End the game
+                    Console.WriteLine("Thanks for playing!\n");
+                    return false;  // Back to main menu
                 }
             }
-            return true;
+            return true;  // Continue to next level
         }
 
         public static void EndGameMessage(string userName)
@@ -266,6 +300,64 @@ namespace GuessingWordGame
             Console.WriteLine("====================================================");
         }
 
+        static void AccountSaving()
+        {
+            bool confirmSave = YesNoConfirmation("\nDo you want to save this account? (yes/no): ");
+            if (confirmSave)
+            {
+                Console.WriteLine("\nAccount saved successfully! You can now login to the game.\n");
+                accountSaved = true;
+            }
+            else
+            {
+                Console.WriteLine("\nAccount not saved. Please register again.\n");
+            }
+        }
+
+        static bool YesNoConfirmation(string displayText)
+        {
+            string input;
+            do
+            {
+                Console.Write(displayText);
+                input = Console.ReadLine()?.Trim().ToLower();
+
+                if (input != "yes" && input != "no")
+                {
+                    Console.WriteLine("Invalid input. Please enter 'yes' or 'no'.\n");
+                }
+            }
+            while (input != "yes" && input != "no");
+
+            return input == "yes";
+        }
+
+        static void HandleRegistration()
+        {
+            accountSaved = false;
+
+            while (!accountSaved)
+            {
+                Console.WriteLine("=====Account Registration=====");
+                string fullName = AcceptNonEmptyInput("Enter your full name: ");
+                string registerUserName = AcceptNonEmptyInput("Enter your desired username: ");
+                string registerPassWord = AcceptNonEmptyInput("Enter your password: ");
+                AccountSaving();
+            }
+        }
+
+        static void HandleLeaderBoards()
+        {
+            Console.WriteLine("=====Leaderboards=====\n");
+            Console.WriteLine("Rank\tUsername\tScore");
+            Console.WriteLine("-----------------------------\n");
+            Console.WriteLine("Nothing to show right now.\n");
+        }
+
+        static bool ConfirmExit()
+        {
+            return YesNoConfirmation("Are you sure you want to exit the game? (yes/no): ");
+        }
 
     }
 }

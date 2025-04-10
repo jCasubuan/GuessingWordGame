@@ -6,39 +6,39 @@ namespace GuessingWordGame
 {
     public class Program
     {
+        static string[] mainMenuActions = new string[] { "[1] Login", "[2] Register", "[3] Leaderboards", "[4] Exit\n", };
+        static string[] playerMenu = new string[] { "[1] Start new game", "[2] View total points", "[3] Log out\n" };
         static bool accountSaved = false;
 
         static void Main(string[] args)
         {
-            DisplayWelcomeMessage(); // method calling
+            DisplayWelcomeMessage();
 
-            string userName = string.Empty;
+            //string userName = string.Empty;
 
             bool running = true;
             while (running)
             {
-                Console.WriteLine("[1] Login ");
-                Console.WriteLine("[2] Register ");
-                Console.WriteLine("[3] Leaderboards ");
-                Console.WriteLine("[4] Exit\n");
-                string optionsInput = AcceptNonEmptyInput("Choose an option: ");
+                DisplayMainMenu();
+
+                int optionsInput = GetOptionsInput("Choose an option: ");
                 Console.WriteLine();
 
                 switch (optionsInput)
                 {
-                    case "1":
+                    case 1:
                         HandleLogin();
                         break;
 
-                    case "2":
+                    case 2:
                         HandleRegistration();
                         break;
 
-                    case "3":
+                    case 3:
                         HandleLeaderBoards();
                         break;
 
-                    case "4":
+                    case 4:
                         if (ConfirmExit())
                         {
                             Console.WriteLine("\nExiting the game...");
@@ -55,11 +55,22 @@ namespace GuessingWordGame
                         break;
                 }
             }
+        }
 
         static void DisplayWelcomeMessage()
         {
             Console.WriteLine("Welcome to my C# version of Hangman. Hope you like it!");
-            Console.WriteLine("_______________________________________________________" + Environment.NewLine);
+            Console.WriteLine("_______________________________________________________\n");
+        }
+
+        static void DisplayMainMenu()
+        {           
+
+            foreach (var action in mainMenuActions)
+            {
+                Console.WriteLine(action);
+            }
+               
         }
 
         static void HandleLogin()
@@ -67,41 +78,102 @@ namespace GuessingWordGame
             Console.WriteLine("=====Login=====");
             string userName = AcceptNonEmptyInput("Enter Username: ");
             string passWord = AcceptNonEmptyInput("Enter Password: ");
-            Console.WriteLine($"\nWelcome, {userName}! Let's start the game\n");
-            bool wantsToPlay = StartGame(userName);
+            Console.WriteLine($"\nWelcome, {userName}! Let's start the game.\n");
 
-                if (wantsToPlay)
+            DisplayLoggedInMenu(userName);
+        }
+
+        static void DisplayLoggedInMenu(string userName)
+        {
+            bool loggedIn = true;
+
+            while (loggedIn)
+            {
+                
+                DisplayPlayerMenu(userName);
+
+                int optionsInput = GetOptionsInput("Choose an option: ");
+                Console.WriteLine();
+
+                switch (optionsInput)
                 {
-                    Console.WriteLine("Returning to main menu...\n");
+                    case 1:
+                        StartGame(userName);
+                        break;
+                    
+                    case 2:
+                        ViewTotalPoints(userName);
+                        break;
+
+                    case 3:
+                        if (ConfirmLogout(userName))
+                        {
+                            Console.WriteLine($"\nLogging out...\n");
+                            loggedIn = false;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Logout cancelled. Returning to player menu...\n");
+                        }
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid input! Please choose from 1 to 3\n");
+                        break;  
+                       
                 }
+            }   
+        }
+
+        static void DisplayPlayerMenu(string userName)
+        {
+            Console.WriteLine($"=====Player Menu: {userName}=====\n");
+
+            foreach (var action in playerMenu)
+            {
+                Console.WriteLine(action);
+            }
+         
+        }
+
+        static bool ConfirmLogout(string userName)
+        {
+            return YesNoConfirmation($"Are you sure you want to log out, {userName}? (yes/no): ");
+        }
+
+        static void ViewTotalPoints(string userName)
+        {
+            Console.WriteLine($"=====Points Summary for {userName}=====\n");
+            Console.WriteLine($"Your total points: {GuessingGameProcess.Points}");
+            Console.WriteLine("======================================\n");
+            WaitForAcknowledgement();
         }
 
         static bool StartGame(string userName)
         {
-            string[] wordsToGuess = GuessingGameProcess.GetWords(); // business logic
-            int totalLevel = GuessingGameProcess.GetTotalLevel(); // business logic
-            int points = GuessingGameProcess.GetPoints(); // business logic
+            string[] wordsToGuess = GuessingGameProcess.WordToGuess; // property from business logic
+            int totalLevel = GuessingGameProcess.TotalLevel; // property from business logic
+            int points = GuessingGameProcess.Points; // property from business logic
 
             for (int level = 0; level < totalLevel; level++)
-            {
+            {               
                 Console.WriteLine($"LEVEL {level + 1}/{totalLevel}");
 
-                int playerLives = 7;
+                GuessingGameProcess.ResetLives();
 
                 string wordToGuess = wordsToGuess[level];
                 bool guessedCorrectly = false;
 
                 while (!guessedCorrectly)
                 {
-                    guessedCorrectly = PlayLevel(userName, wordToGuess, ref playerLives); // method calling
+                    guessedCorrectly = PlayLevel(userName, wordToGuess); // method calling
 
                     if (!guessedCorrectly)
                     {
-                            Console.Write("\nDo you want to try again? (yes/no): ");
-                            string tryAgain = YesNoConfirmation("") ? "yes" : "no";
-                            Console.WriteLine();
+                        bool tryAgain = YesNoConfirmation("Do you want to try again? (yes/no): ");
+                        Console.WriteLine();
 
-                            if (tryAgain == "no")
+                        if (!tryAgain)
                         {
                             if (level == 0)
                             {
@@ -115,7 +187,7 @@ namespace GuessingWordGame
                                 return false; // ← return to main menu
                             }
 
-                        playerLives = 3; // Reset lives if they choose to try again
+                        GuessingGameProcess.ResetLives(); // Reset lives if they choose to try again
                     }
                 }
 
@@ -131,7 +203,24 @@ namespace GuessingWordGame
             EndGameMessage(userName); // Game completed successfully
             return false; // After full game completion, return to menu
         }
-    }
+
+        static int GetOptionsInput(string displayText)
+        {
+            int userInput;
+            do
+            {
+                Console.Write(displayText);
+                if (int.TryParse(Console.ReadLine()?.Trim(), out userInput))
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("\nInvalid input. Please enter a valid number.\n");
+                }
+            } while (true);
+            return userInput;
+        }
 
         static string AcceptNonEmptyInput(string displayText)
         {
@@ -151,23 +240,23 @@ namespace GuessingWordGame
             return userInput;
         }
 
-        public static bool PlayLevel(string userName, string wordToGuess, ref int playerLives)
+        public static bool PlayLevel(string userName, string wordToGuess)
         {
             char[] guessedWord = GuessingGameProcess.InitializeGuessedWord(wordToGuess);
 
-            while (playerLives > 0)
+            while (GuessingGameProcess.PlayerLives > 0)
             {
-                DisplayLevelInfo(playerLives, guessedWord);
+                DisplayLevelInfo(GuessingGameProcess.PlayerLives, guessedWord);
 
                 char guessedLetter = GetValidGuess();
-                bool correctGuess = GuessingGameProcess.ProcessPlayerGuess(wordToGuess, guessedWord, guessedLetter, ref playerLives);
+                bool correctGuess = GuessingGameProcess.ProcessPlayerGuess(wordToGuess, guessedWord, guessedLetter);
 
                 if (GuessingGameProcess.IsWordGuessed(guessedWord, wordToGuess))
                 {
                     return CheckLevelResult(guessedWord, wordToGuess);
                 }
 
-                if (playerLives > 0)
+                if (GuessingGameProcess.PlayerLives > 0)
                 {
                     HandleGuessFeedback(correctGuess);
                 }
@@ -196,13 +285,13 @@ namespace GuessingWordGame
                 return true;
             }
 
-            Console.WriteLine("Sorry, you ran out of lives!");
+            Console.WriteLine("Sorry, you ran out of lives!\n");
             return false;  
         }
 
         public static void DisplayLevelInfo(int playerLives, char[] guessedWord)
         {
-            Console.WriteLine($"Your lives remaining: {playerLives} | Points: {GuessingGameProcess.GetPoints()}");
+            Console.WriteLine($"Your lives remaining: {playerLives} | Points: {GuessingGameProcess.Points}");
             Console.WriteLine($"Word to guess: {new string(guessedWord)}\n");
         }
 
@@ -258,20 +347,22 @@ namespace GuessingWordGame
         {
             Console.WriteLine("You gave up on the first level.");
             Console.WriteLine($"Your total score: {points} points.");
-            Console.WriteLine($"Better luck next time, {userName}!");
+            Console.WriteLine($"Better luck next time, {userName}!\n");
+            WaitForAcknowledgement();
         }
 
         public static void ExitMidGameLosing(int points)
         {
             Console.WriteLine("You have decided to end the game midway, but why?");
-            Console.WriteLine($"Your total score: {GuessingGameProcess.GetPoints()} points.");
+            Console.WriteLine($"Your total score: {GuessingGameProcess.Points} points.");
             Console.WriteLine("Remember, winners never quit, and quitters never win.\n");
+            WaitForAcknowledgement();
         }
 
         static bool HandleLevelProgression(ref int points, int level, int totalLevel)
         {
             GuessingGameProcess.UpdatePoints(10);  // Award 10 points for correct guess
-            Console.WriteLine($"You earned 10 points! Total points: {GuessingGameProcess.GetPoints()}");
+            Console.WriteLine($"You earned 10 points! Total points: {GuessingGameProcess.Points}");
             Console.WriteLine();
 
             if (level < totalLevel - 1)
@@ -282,8 +373,9 @@ namespace GuessingWordGame
 
                 if (!continueGame)
                 {
-                    Console.WriteLine($"Your total score: {GuessingGameProcess.GetPoints()} points.");
+                    Console.WriteLine($"Your total score: {GuessingGameProcess.Points} points.");
                     Console.WriteLine("Thanks for playing!\n");
+                    WaitForAcknowledgement();
                     return false;  // Back to main menu
                 }
             }
@@ -295,9 +387,11 @@ namespace GuessingWordGame
             Console.WriteLine("====================================================");
             Console.WriteLine($"CONGRATULATIONS, {userName}!");
             Console.WriteLine($"You completed all levels!");
-            Console.WriteLine($"Your total score: {GuessingGameProcess.GetPoints()} points.");
+            Console.WriteLine($"Your total score: {GuessingGameProcess.Points} points.");
             Console.WriteLine("You're a Hangman Master!");
-            Console.WriteLine("====================================================");
+            Console.WriteLine("====================================================\n");
+
+            WaitForAcknowledgement();
         }
 
         static void AccountSaving()
@@ -358,6 +452,23 @@ namespace GuessingWordGame
         {
             return YesNoConfirmation("Are you sure you want to exit the game? (yes/no): ");
         }
+
+        static void WaitForAcknowledgement()
+        {
+            Console.Write("Type \"ok\" to continue: ");
+            string input;
+
+            do
+            {
+                input = Console.ReadLine()?.ToLower();
+                if (input != "ok")
+                {
+                    Console.Write("\nPlease type \"ok\" to continue: ");
+                }
+            } while (input != "ok");
+            Console.WriteLine();
+        }
+
 
     }
 }

@@ -8,30 +8,31 @@ namespace GuessingGame_BusinessLogic
 {
     public class GuessingGameProcess
     {
-        private static string[] wordsToGuess = { "programming", "debugging", "algorithm", "motherboard", "networking" };
-        private static int totalLevel = 5;
-        private static int points = 0;
+        static string[] wordsToGuess = { "programming", "debugging", "algorithm", "motherboard", "networking" };
+        static int totalLevel = 5;
+        static int points = 0;
+        static int playerLives = 7;
 
-        public static string[] GetWords()
-        {
-            return wordsToGuess;
-        }
+        public static string[] WordToGuess { get { return wordsToGuess; } }
 
-        public static int GetTotalLevel()
-        {
-            return totalLevel;
-        }
+        public static int TotalLevel { get { return totalLevel; } }
 
-        public static int GetPoints()
-        {
-            return points;
-        }
+        public static int Points { get { return points; } }
+
+        public static int PlayerLives { get { return playerLives; } }
+
 
         public static void UpdatePoints(int newPoints)
         {
             points += newPoints; 
         }
 
+        public static void ResetLives()
+        {
+            playerLives = 7;
+        }
+
+        
         public static bool UpdateGuessedWordWithLetter(string wordToGuess, char[] guessedWord, char guessedLetter)
         {
             bool correctGuess = false;
@@ -65,7 +66,7 @@ namespace GuessingGame_BusinessLogic
             return new string(guessedWord) == wordToGuess;
         }
 
-        public static bool ProcessPlayerGuess(string wordToGuess, char[] guessedWord, char guessedLetter, ref int playerLives)
+        public static bool ProcessPlayerGuess(string wordToGuess, char[] guessedWord, char guessedLetter)
         {
             bool correctGuess = UpdateGuessedWordWithLetter(wordToGuess, guessedWord, guessedLetter);
 

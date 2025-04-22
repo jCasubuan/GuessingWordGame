@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GuessingGameCommon\GuessingGameCommon.csproj" />
-    <ProjectReference Include="..\GuessingGameDataService\GuessingGameDataService.csproj" />
   </ItemGroup>
 
 </Project>

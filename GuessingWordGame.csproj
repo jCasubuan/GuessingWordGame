@@ -8,8 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="GuessingGameCommon\**" />
+    <Compile Remove="GuessingGameDataService\**" />
     <Compile Remove="GuessingGame_BusinessLogic\**" />
+    <EmbeddedResource Remove="GuessingGameCommon\**" />
+    <EmbeddedResource Remove="GuessingGameDataService\**" />
     <EmbeddedResource Remove="GuessingGame_BusinessLogic\**" />
+    <None Remove="GuessingGameCommon\**" />
+    <None Remove="GuessingGameDataService\**" />
     <None Remove="GuessingGame_BusinessLogic\**" />
   </ItemGroup>
 

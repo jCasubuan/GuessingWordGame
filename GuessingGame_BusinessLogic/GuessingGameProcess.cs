@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GuessingGameCommon;
+using GuessingGameDataService;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,35 +10,37 @@ namespace GuessingGame_BusinessLogic
 {
     public class GuessingGameProcess
     {
-        static string[] wordsToGuess = { "programming", "debugging", "algorithm", "motherboard", "networking" };
-        static int totalLevel = 5;
-        static int points = 0;
-        static int playerLives = 7;
-
-        public static string[] WordToGuess { get { return wordsToGuess; } }
-
-        public static int TotalLevel { get { return totalLevel; } }
-
-        public static int Points { get { return points; } }
-
-        public static int PlayerLives { get { return playerLives; } }
-
-
-        public static void UpdatePoints(int newPoints)
+        private int totalLevel = 50;
+        private int playerLives = 7;
+        private int wrongGuessesInLevel = 0;
+        private GameDataService gameDataService;
+        private PlayerDataService playerDataService;
+       
+        public GuessingGameProcess()
         {
-            points += newPoints; 
+            gameDataService = new GameDataService();
+            playerDataService = new PlayerDataService();
         }
 
-        public static void ResetLives()
+        public int TotalLevel { get { return totalLevel; } }
+
+        public int PlayerLives { get { return playerLives; } }
+
+        public void ResetLives()
         {
             playerLives = 7;
         }
 
-        
-        public static bool UpdateGuessedWordWithLetter(string wordToGuess, char[] guessedWord, char guessedLetter)
+        public void DecreaseLives()
+        {
+            playerLives--;
+        }
+
+        // Game mechanics methods
+
+        public bool UpdateGuessedWordWithLetter(string wordToGuess, List<char> guessedWord, char guessedLetter)
         {
             bool correctGuess = false;
-
             for (int i = 0; i < wordToGuess.Length; i++)
             {
                 if (wordToGuess[i] == guessedLetter)
@@ -45,41 +49,107 @@ namespace GuessingGame_BusinessLogic
                     correctGuess = true;
                 }
             }
-
             return correctGuess;
         }
 
-        public static char[] InitializeGuessedWord(string wordToGuess)
+        public List<char> InitializeGuessedWord(string wordToGuess)
         {
-            char[] guessedWord = new char[wordToGuess.Length];
-
-            for (int i = 0; i < guessedWord.Length; i++)
+            List<char> guessedWord = new List<char>();
+            for (int i = 0; i < wordToGuess.Length; i++)
             {
-                guessedWord[i] = '_';
+                guessedWord.Add(wordToGuess[i] == ' ' ? ' ' : '_');
             }
-
             return guessedWord;
         }
 
-        public static bool IsWordGuessed(char[] guessedWord, string wordToGuess)
+        public bool IsWordGuessed(List<char> guessedWord, string wordToGuess)
         {
-            return new string(guessedWord) == wordToGuess;
+            return new string(guessedWord.ToArray()) == wordToGuess;
         }
 
-        public static bool ProcessPlayerGuess(string wordToGuess, char[] guessedWord, char guessedLetter)
+        public bool ProcessPlayerGuess(string wordToGuess, List<char> guessedWord, char guessedLetter)
         {
             bool correctGuess = UpdateGuessedWordWithLetter(wordToGuess, guessedWord, guessedLetter);
-
             if (!correctGuess)
             {
-                playerLives--;   
+                DecreaseLives();
             }
-
             return correctGuess;
         }
 
+        // logic for scoring
+        public int CalculateScoreForLevel()
+        {
+            int points = 10 - wrongGuessesInLevel;
+            return points < 0 ? 0 : points;
+        }
 
+        public void ResetWrongGuesses()
+        {
+            wrongGuessesInLevel = 0;
+        }
 
+        public List<WordHint> GetWordHints()
+        {
+            return gameDataService.GetAllWordHints().ToList();
+        }
+
+        //logic for tracking wrong guesses
+        public void IncrementWrongGuesses()
+        {
+            wrongGuessesInLevel++;
+        }
+
+        public int GetWrongGuessesInLevel()
+        {
+            return wrongGuessesInLevel;
+        }
+
+        public List<KeyValuePair<string, int>> GetLeaderboard()
+        {
+            return playerDataService.GetLeaderboard();
+        }
+
+        public int GetPlayerScore(string userName)
+        {
+            return playerDataService.GetPlayerScore(userName);
+        }
+
+        public bool VerifyLogin(string userName, string passWord)
+        {
+            return playerDataService.VerifyLogin(userName, passWord);
+        }
+
+        public bool PlayerExists (string userName)
+        {
+            return playerDataService.PlayerExists(userName);
+        }
+
+        public bool RegisterPlayer(string fullName, string userName, string password)
+        {
+            return playerDataService.RegisterPlayer(fullName, userName, password);
+        }
+
+        //public void UpdatePlayerScore(string userName, int newPoints)
+        //{
+        //    playerDataService.UpdatePlayerScore(userName, newPoints);
+        //}
+
+        public void AddToPlayerScore(string userName, int pointsToAdd)
+        {
+            playerDataService.AddToPlayerScore(userName, pointsToAdd);
+        }
+
+        public void UpdatePlayerLevelProgress(string userName, int lastCompletedLevel)
+        {
+            playerDataService.UpdatePlayerLevelProgress(userName, lastCompletedLevel);
+        }
+
+        public int GetLastCompletedLevel(string userName)
+        {
+            return playerDataService.GetLastCompletedLevel(userName);
+        }
 
     }
+
 }

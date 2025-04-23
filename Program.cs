@@ -524,7 +524,7 @@ namespace GuessingWordGame
                 if (!correctGuess)
                 {
                     gameProcess.IncrementWrongGuesses();
-                    //gameProcess.AddToPlayerScore(userName, -1);
+                    //gameProcess.AddToPlayerScore(userName, -1); // remove this
                     Task.Run(() => Console.Beep(1000, 120));
 
                 }
@@ -600,9 +600,8 @@ namespace GuessingWordGame
         {
             int score = gameProcess.GetPlayerScore(userName);
 
-            Console.WriteLine("You have decided to end the game midway, but why?");
-            Console.WriteLine($"Your total score: {score} points.");
-            Console.WriteLine("Remember, winners never quit, and quitters never win.\n");
+            Console.WriteLine("You ran out of lives this round — no points added this time.\n");
+            Console.WriteLine($"Your current score: {score} points.\n\n");
 
             WaitForAcknowledgement();
         }

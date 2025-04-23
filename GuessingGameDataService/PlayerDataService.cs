@@ -12,7 +12,6 @@ namespace GuessingGameDataService
     {
         private Dictionary<string, Player> players = new Dictionary<string, Player>();
 
-
         public bool RegisterPlayer(string fullName, string userName, string password)
         {
             if (players.ContainsKey(userName))
@@ -21,6 +20,7 @@ namespace GuessingGameDataService
             }
 
             players[userName] = new Player(fullName, userName, password);
+            //players.Add(userName, new Player(fullName, userName, password));
             return true;
         }
 

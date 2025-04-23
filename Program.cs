@@ -524,7 +524,7 @@ namespace GuessingWordGame
                 if (!correctGuess)
                 {
                     gameProcess.IncrementWrongGuesses();
-                    gameProcess.AddToPlayerScore(userName, -1);
+                    //gameProcess.AddToPlayerScore(userName, -1);
                     Task.Run(() => Console.Beep(1000, 120));
 
                 }

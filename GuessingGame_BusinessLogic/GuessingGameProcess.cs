@@ -57,7 +57,15 @@ namespace GuessingGame_BusinessLogic
             List<char> guessedWord = new List<char>();
             for (int i = 0; i < wordToGuess.Length; i++)
             {
-                guessedWord.Add(wordToGuess[i] == ' ' ? ' ' : '_');
+                if (wordToGuess[i] == ' ')
+                {
+                    guessedWord.Add(' ');
+                }
+                else
+                {
+                    guessedWord.Add('_');
+                }
+
             }
             return guessedWord;
         }
@@ -81,7 +89,16 @@ namespace GuessingGame_BusinessLogic
         public int CalculateScoreForLevel()
         {
             int points = 10 - wrongGuessesInLevel;
-            return points < 0 ? 0 : points;
+
+            if (points < 0)
+            {
+                return 0;
+            }
+            else
+            {
+                return points;
+            }
+
         }
 
         public void ResetWrongGuesses()

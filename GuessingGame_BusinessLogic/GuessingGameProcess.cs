@@ -13,13 +13,16 @@ namespace GuessingGame_BusinessLogic
         private int totalLevel = 50;
         private int playerLives = 7;
         private int wrongGuessesInLevel = 0;
+
         private GameDataService gameDataService;
         private PlayerDataService playerDataService;
-       
+        private AdminDataService adminDataService;
+
         public GuessingGameProcess()
         {
             gameDataService = new GameDataService();
             playerDataService = new PlayerDataService();
+            adminDataService = new AdminDataService();
         }
 
         public int TotalLevel { get { return totalLevel; } }
@@ -147,11 +150,6 @@ namespace GuessingGame_BusinessLogic
             return playerDataService.RegisterPlayer(fullName, userName, password);
         }
 
-        //public void UpdatePlayerScore(string userName, int newPoints)
-        //{
-        //    playerDataService.UpdatePlayerScore(userName, newPoints);
-        //}
-
         public void AddToPlayerScore(string userName, int pointsToAdd)
         {
             playerDataService.AddToPlayerScore(userName, pointsToAdd);
@@ -166,6 +164,89 @@ namespace GuessingGame_BusinessLogic
         {
             return playerDataService.GetLastCompletedLevel(userName);
         }
+
+        public bool ValidateAdminLogin(string username, string password)
+        {
+            return adminDataService.ValidateAdminLogin(username, password);
+        }
+
+        // topic: Player data, for admin data processsing
+        public List<Player> GetAllPlayers()
+        {
+            return playerDataService.GetAllPlayers();
+        }
+
+        public Player SearchPlayerByInput(string adminInput)
+        {           
+           if (int.TryParse(adminInput, out int playerId))
+           {
+                return playerDataService.SearchById(playerId);
+           }
+            else
+            {   
+                return playerDataService.SearchByUsername(adminInput);
+            }
+        }
+
+        public bool DeletePlayer(string userName)
+        {            
+            return playerDataService.DeletePlayer(userName);
+        }
+
+        public WordHint SearchForWord(string word)
+        {
+            if (string.IsNullOrEmpty(word))
+            {
+                return null;
+            }
+            return gameDataService.SearchForWord(word);
+        }
+
+        public bool AddWordHint(string word, string hint, string diffulty)
+        {
+            return gameDataService.AddWordHint(word, hint, diffulty);
+        }
+
+        public bool UpdateWord(string oldWord, string newWord, string newHint, string newDifficulty)
+        {
+            if (string.IsNullOrWhiteSpace(oldWord) || string.IsNullOrWhiteSpace(newWord))
+            {
+                return false;
+            }
+
+            newWord = newWord.Trim();
+            newHint = newHint.Trim() ?? string.Empty;
+            newDifficulty = ValidateDifficulty(newDifficulty);
+
+            return gameDataService.UpdateWord(oldWord, newWord, newHint, newDifficulty);
+        }
+
+        private string ValidateDifficulty(string difficulty)
+        {
+            string defaultDifficulty = difficulty.Trim().ToLower() ?? "medium";
+
+            switch (defaultDifficulty)
+            {
+                case "easy":
+                case "medium":
+                case "hard":
+                case "extra hard":
+                    return defaultDifficulty;
+                default:
+                    return "medium";
+            }
+        }
+
+        public bool DeleteWord(string word)
+        {
+            if (string.IsNullOrWhiteSpace(word))
+                return false;
+
+            return gameDataService.DeleteWord(word);
+        }
+
+
+
 
     }
 

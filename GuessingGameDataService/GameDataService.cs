@@ -41,6 +41,9 @@ namespace GuessingGameDataService
             wordsToGuess.Add(new WordHint("scalability", "Ability of system to handle growing workload", "hard")); //21
             wordsToGuess.Add(new WordHint("processor", "Brain of a computer that executes instructions", "easy"));
             wordsToGuess.Add(new WordHint("query", "Request for information from a database", "medium"));
+            wordsToGuess.Add(new WordHint("devops", "Combining software development and IT operations", "medium"));
+            wordsToGuess.Add(new WordHint("variable", "Named storage location for data in programming", "easy"));
+
 
         }
 
@@ -49,8 +52,95 @@ namespace GuessingGameDataService
             return wordsToGuess.AsReadOnly();
         }
 
-        // other CRUD functionalities, coming soon for admin menu
+        public WordHint SearchForWord(string word)
+        {
+            foreach (WordHint wordHint in wordsToGuess)
+            {
+                if (wordHint.Word.Equals(word, StringComparison.OrdinalIgnoreCase))
+                {
+                    return wordHint;
+                }
+            }
+            return null;
 
+        }
+
+        public bool AddWordHint(string word, string hint, string difficulty)
+        {
+            foreach (var words in wordsToGuess)
+            {
+                if (words.Word.Equals(word, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+            }
+            wordsToGuess.Add(new WordHint(word, hint, difficulty));
+            return true;
+        }
+
+        public bool UpdateWord(string oldWord, string newWord, string newHint, string newDifficulty)
+        {
+            int oldWordIndex = FindWordIndex(oldWord);
+
+            if (oldWordIndex == -1)
+            {
+                return false; // word not found
+            }
+
+            if (!oldWord.Equals(newWord, StringComparison.OrdinalIgnoreCase) &&
+                DoesWordExist(newWord))
+            {
+                return false; 
+            }
+
+            // Perform update
+            wordsToGuess[oldWordIndex].Word = newWord;
+            wordsToGuess[oldWordIndex].Hint = newHint;
+            wordsToGuess[oldWordIndex].Difficulty = newDifficulty;
+            return true;
+        }
+
+
+        private bool DoesWordExist(string word) // method pang chek kung ang word ay nasa list collection
+        {
+            for (int i = 0; i < wordsToGuess.Count; i++)
+            {
+                if (string.Equals(wordsToGuess[i].Word, word, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private int FindWordIndex(string word) // method pang hanap ng index ng word sa list collection
+        {
+            for (int i = 0; i < wordsToGuess.Count; i++)
+            {
+                if (string.Equals(wordsToGuess[i].Word, word, StringComparison.OrdinalIgnoreCase))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public bool DeleteWord(string word)
+        {
+            int index = FindWordIndex(word);
+
+            if (index == -1)
+                return false;
+
+            wordsToGuess.RemoveAt(index);
+          
+            for (int i = 0; i < wordsToGuess.Count; i++)
+            {
+                wordsToGuess[i].No = i + 1;
+            }
+
+            return true;
+        }
 
     }
 }

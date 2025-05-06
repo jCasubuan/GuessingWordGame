@@ -8,6 +8,7 @@ namespace GuessingGameCommon
 {
     public class WordHint
     {
+        public int No { get; set; }
         public string Word { get; set; }
         public string Hint { get; set; }
         public string Difficulty { get; set; } 

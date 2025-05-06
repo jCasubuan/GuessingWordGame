@@ -14,13 +14,13 @@ namespace GuessingGameCommon
 
         public string Password { get; private set; }
 
+        public int PlayerId { get; set; }
+
         public int Scores { get; set; }
 
         public int HighScore { get; set; }
 
-        public int LastCompletedLevel { get; set; } = 0;
-
-        //public bool HasOngoingGame { get { return LastCompletedLevel < 50; } }
+        public int LastCompletedLevel { get; set; } = 0;       
 
         public Player(string fullName, string userName, string password)
         {

@@ -10,6 +10,7 @@ namespace GuessingGameDataService
 {
     public class PlayerDataService
     {
+        private int playerIdCounter = 1;
         private Dictionary<string, Player> players = new Dictionary<string, Player>();
 
         public bool RegisterPlayer(string fullName, string userName, string password)
@@ -19,8 +20,11 @@ namespace GuessingGameDataService
                 return false;
             }
 
-            players[userName] = new Player(fullName, userName, password);
-            //players.Add(userName, new Player(fullName, userName, password));
+            players[userName] = new Player(fullName, userName, password)
+            {
+                PlayerId = playerIdCounter++
+            };
+           
             return true;
         }
 
@@ -46,14 +50,6 @@ namespace GuessingGameDataService
             }
             return 0;
         }
-
-        //public void UpdatePlayerScore(string userName, int newPoints)
-        //{
-        //    if (players.ContainsKey(userName))
-        //    {
-        //        players[userName].Scores = newPoints; //Reset the score at the start of a new game session
-        //    }
-        //}
 
         public void AddToPlayerScore(string userName, int pointsToAdd)
         {
@@ -112,6 +108,46 @@ namespace GuessingGameDataService
         }
 
 
+        // for admin menu functionalities
+        public List<Player> GetAllPlayers() 
+        {
+            return players.Values.ToList();
+        }
+
+        public Player SearchByUsername(string userName)
+        {
+            if (players.ContainsKey(userName))
+            {
+                return players[userName];
+            }
+            return null;
+        }
+
+        public Player SearchById(int playerId)
+        {
+            foreach (Player player in players.Values)
+            {
+                if (player.PlayerId == playerId)
+                {
+                    return player;
+                }
+            }
+            return null;
+        }
+
+        public bool DeletePlayer(string userName)
+        {
+            if (players.ContainsKey(userName))
+            {
+                players.Remove(userName);
+                return true;
+            }
+            return false;
+        }
+
+        
+
+        
 
     }
 }

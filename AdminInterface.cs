@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -143,10 +144,8 @@ namespace GuessingWordGame
             Console.WriteLine(new string('-', 60));
 
             DisplayAllPlayersData(Program.gameProcess);
-
             Console.WriteLine();
             Console.WriteLine();
-
             Program.WaitForAcknowledgement();
         }
         
@@ -198,6 +197,38 @@ namespace GuessingWordGame
 
         public static void DeletePlayerAccount()
         {
+            DeletePlayerWarning();
+            string usernameToDelete = Program.AcceptNonEmptyInput("Enter the username to delete: ");
+
+            if(!Program.gameProcess.PlayerExists(usernameToDelete))
+            {
+                Console.WriteLine($"\nPlayer '{usernameToDelete}' does not exist.");
+            }
+            else
+            {
+                DeletePlayerValidation(usernameToDelete);
+            }
+
+            Program.WaitForAcknowledgement();
+        }
+
+        private static void DeletePlayerValidation(string usernameToDelete)
+        {
+            bool confirm = Program.YesNoConfirmation($"\nAre you sure you want to delete '{usernameToDelete}'? This process cannot be undone. (yes/no): ");
+
+            if (confirm)
+            {
+                Program.gameProcess.DeletePlayer(usernameToDelete);
+                Console.WriteLine($"\n\nPlayer '{usernameToDelete}' has been successfully deleted.\n\n");
+            }
+            else
+            {
+                Console.WriteLine($"\n\nDeletion cancelled for '{usernameToDelete}'.\n\n");
+            }
+        }
+
+        private static void DeletePlayerWarning()
+        {
             Console.Clear();
             Console.WriteLine("===== DELETE PLAYER ACCOUNT =====\n");
             Console.ForegroundColor = ConsoleColor.Red;
@@ -208,32 +239,6 @@ namespace GuessingWordGame
             Console.WriteLine("• - Account recovery will NOT be possible after deletion.");
             Console.WriteLine("\nPROCEED WITH EXTREME CAUTION. THIS ACTION CANNOT BE UNDONE.\n");
             Console.ResetColor();
-
-            string usernameToDelete = Program.AcceptNonEmptyInput("Enter the username to delete: ");
-
-            if(!Program.gameProcess.PlayerExists(usernameToDelete))
-            {
-                Console.WriteLine($"\nPlayer '{usernameToDelete}' does not exist.");
-            }
-            else
-            {
-                bool confirm = Program.YesNoConfirmation($"\nAre you sure you want to delete '{usernameToDelete}'? This process cannot be undone. (yes/no): ");
-
-                if (confirm)
-                {
-                    Program.gameProcess.DeletePlayer(usernameToDelete);
-                    Console.WriteLine($"\n\nPlayer '{usernameToDelete}' has been successfully deleted.");
-                }
-                else
-                {
-                    Console.WriteLine($"\n\nDeletion cancelled for '{usernameToDelete}'.");
-                }
-            }
-
-            Console.WriteLine();
-            Console.WriteLine();
-
-            Program.WaitForAcknowledgement();
         }
 
         public static void DisplayManageWordOptions()
@@ -244,7 +249,7 @@ namespace GuessingWordGame
             Program.DisplayMenuOptions(manageWords);
 
         }
-
+      
         public static void WordManager()
         {
             bool loggedIn = true;
@@ -508,25 +513,32 @@ namespace GuessingWordGame
         public static void DeleteWord()
         {
             Console.Clear();
-            Console.WriteLine("===== Delete Word =====\n");
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("WARNING: Words deleted through this function will be permanently removed and CANNOT be recovered!\n");
-            Console.ResetColor();
-
+            DeleteWordWarning();
             string inputWord = Program.AcceptNonEmptyInput("Enter the word you want to delete: ");
-            WordHint wordToDelete = Program.gameProcess.SearchForWord(inputWord);
+            WordHint wordHint = Program.gameProcess.SearchForWord(inputWord);
 
-            if (wordToDelete == null)
+            if (wordHint == null)
             {
                 Console.WriteLine($"\nThe word '{inputWord}' was not found.\n");
                 Program.WaitForAcknowledgement();
                 return;
             }
 
-            Console.WriteLine($"\nWord Found: {wordToDelete.Word}");
-            Console.WriteLine($"Hint: {wordToDelete.Hint}");
-            Console.WriteLine($"Difficulty: {wordToDelete.Difficulty}");
+            DisplayWordHint(wordHint);
+            DeleteWordValidation(inputWord);
+            Program.WaitForAcknowledgement();
+        }
 
+        private static void DeleteWordWarning()
+        {            
+            Console.WriteLine("===== Delete Word =====\n");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("WARNING: Words deleted through this function will be permanently removed and CANNOT be recovered!\n");
+            Console.ResetColor();
+        }
+
+        private static void DeleteWordValidation(string inputWord)
+        {
             bool confirm = Program.YesNoConfirmation("\nAre you sure you want to permanently delete this word? (yes/no): ");
 
             if (confirm)
@@ -546,10 +558,8 @@ namespace GuessingWordGame
             {
                 Console.WriteLine("\nDelete operation cancelled.\n");
             }
-
-            Program.WaitForAcknowledgement();
         }
-       
+           
 
         public static void DisplayLeaderboardToolOptions()
         {

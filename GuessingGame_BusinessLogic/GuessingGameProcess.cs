@@ -40,7 +40,6 @@ namespace GuessingGame_BusinessLogic
         }
 
         // Game mechanics methods
-
         public bool UpdateGuessedWordWithLetter(string wordToGuess, List<char> guessedWord, char guessedLetter)
         {
             bool correctGuess = false;

@@ -197,12 +197,13 @@ namespace GuessingWordGame
 
         public static void DeletePlayerAccount()
         {
+            Console.Clear();
             DeletePlayerWarning();
             string usernameToDelete = Program.AcceptNonEmptyInput("Enter the username to delete: ");
 
             if(!Program.gameProcess.PlayerExists(usernameToDelete))
             {
-                Console.WriteLine($"\nPlayer '{usernameToDelete}' does not exist.");
+                Console.WriteLine($"\nPlayer '{usernameToDelete}' does not exist.\n");
             }
             else
             {
@@ -228,8 +229,7 @@ namespace GuessingWordGame
         }
 
         private static void DeletePlayerWarning()
-        {
-            Console.Clear();
+        {           
             Console.WriteLine("===== DELETE PLAYER ACCOUNT =====\n");
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("WARNING: IRREVERSIBLE ACTION\n");

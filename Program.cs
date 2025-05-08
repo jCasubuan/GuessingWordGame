@@ -210,21 +210,7 @@ namespace GuessingWordGame
             } while (input != "ok");
             Console.WriteLine();
         }
-
-        static void EndGameMessage(string userName)
-        {
-            int score = gameProcess.GetPlayerScore(userName);
-
-            Console.WriteLine("====================================================");
-            Console.WriteLine($"CONGRATULATIONS, {userName}!");
-            Console.WriteLine($"You completed all levels!");
-            Console.WriteLine($"Your total score: {score} points.");
-            Console.WriteLine("You're a Hangman Master!");
-            Console.WriteLine("====================================================\n");
-
-            WaitForAcknowledgement();
-        }
-
+        
         static void DisplayLevelInfo(int playerLives, List<char> guessedWord, string userName, string hint, string difficulty, int currentLevel) 
         {           
             int score = gameProcess.GetPlayerScore(userName);
@@ -538,15 +524,9 @@ namespace GuessingWordGame
         {
             List<char> guessedWord = gameProcess.InitializeGuessedWord(wordToGuess);
 
-            while (gameProcess.PlayerLives > 0)
+            while (gameProcess.PlayerLives > 0) 
             {
-                DisplayLevelInfo(gameProcess.PlayerLives, 
-                    guessedWord, 
-                    userName, 
-                    hint, 
-                    difficulty,
-                    currentLevel
-                    ); // UI method call
+                DisplayLevelInfo(gameProcess.PlayerLives, guessedWord, userName, hint, difficulty,currentLevel); 
 
                 char guessedLetter = GetValidGuess();
                 bool correctGuess = gameProcess.ProcessPlayerGuess(wordToGuess, guessedWord, guessedLetter);
@@ -555,9 +535,7 @@ namespace GuessingWordGame
                 {
                     gameProcess.IncrementWrongGuesses();
                     Task.Run(() => Console.Beep(1000, 120));
-
                 }
-
 
                 if (gameProcess.IsWordGuessed(guessedWord, wordToGuess))
                 {
@@ -575,28 +553,36 @@ namespace GuessingWordGame
             int wrongGuesses = gameProcess.GetWrongGuessesInLevel();
             int totalPlayerScore = gameProcess.GetPlayerScore(userName);
 
-            Console.WriteLine("You earned 10 points!");
-            Console.WriteLine($"Total wrong guesses: {wrongGuesses} | Total points: {totalPlayerScore}");
+            DisplayLevelProgression(earnedPoints, wrongGuesses, totalPlayerScore);
+            return PromptNextLevel(userName);
+        }
+
+        private static void DisplayLevelProgression(int earnedPoints, int wrongGuesses, int totalPlayerScore)
+        {
+            Console.WriteLine($"You earned {earnedPoints} points!");
+            Console.WriteLine($"Total wrong guesses: {wrongGuesses} | Total points: {totalPlayerScore}\n");
+        }
+
+        private static bool PromptNextLevel(string userName)
+        {
+            bool continueGame = YesNoConfirmation("Do you want to continue to the next level? (yes/no): ");
             Console.WriteLine();
 
-            if (level < totalLevel - 1)
-            {
-                bool continueGame = YesNoConfirmation("Do you want to continue to the next level? (yes/no): ");
-                Console.WriteLine();
+            if (continueGame) 
+                return true;
 
+            DisplayFinalScore(userName);
+            return false;
+        }
 
-                if (!continueGame)
-                {
-                    int score = gameProcess.GetPlayerScore(userName);
+        private static void DisplayFinalScore(string userName)
+        {
+            int score = gameProcess.GetPlayerScore(userName);
 
-                    Console.WriteLine($"Your total score: {score} points.");
-                    Console.WriteLine("Thanks for playing!\n");
+            Console.WriteLine($"Your total score: {score} points.");
+            Console.WriteLine("Thanks for playing!\n");
 
-                    WaitForAcknowledgement();
-                    return false;  // Back to main menu
-                }
-            }
-            return true;  // Continue to next level
+            WaitForAcknowledgement();
         }
 
         static bool CheckLevelResult(List<char> guessedWord, string wordToGuess)
@@ -670,24 +656,30 @@ namespace GuessingWordGame
 
                 if (string.IsNullOrEmpty(inputLetter))
                 {
-                    UserEmptyInput(); // method calling
+                    DisplayErrorMessage("Your input CANNOT be empty! Please enter a letter."); 
                     continue;
                 }
 
                 if (inputLetter.Length != 1)
                 {
-                    ReadOnlySingleChar(); // method calling
+                    DisplayErrorMessage("NOT COUNTED! Please enter a single letter only."); 
                     continue;
                 }
 
                 if (!char.IsLetter(inputLetter[0]))
                 {
-                    CheckForLetterInput(); // method calling
+                    DisplayErrorMessage("OOPS, only letters are acceptable! Any symbols and numbers are not allowed."); 
                     continue;
                 }
 
                 return inputLetter[0];
             }
+        }
+
+        static void DisplayErrorMessage(string message)
+        {
+            Console.WriteLine(message);
+            Console.WriteLine();
         }
 
         public static bool YesNoConfirmation(string displayText)
@@ -707,53 +699,39 @@ namespace GuessingWordGame
             while (input != "yes" && input != "no");
 
             return input == "yes";
-        }
-
-        static void UserEmptyInput()
-        {
-            Console.WriteLine("Your input CANNOT be empty! Please enter a letter.");
-            Console.WriteLine();
-        }
-
-        static void ReadOnlySingleChar()
-        {
-            Console.WriteLine("NOT COUNTED! Please enter a single letter only.");
-            Console.WriteLine();
-        }
-
-        static void CheckForLetterInput()
-        {
-            Console.WriteLine("OOPS, only letters are acceptable! Any symbols and numbers are not allowed.");
-            Console.WriteLine();
-        }
+        }  
 
         static void ShowGameMechanics()
         {
-            Console.Clear();
+            const string objective = "Objective:";
+            const string gameRules = "Game Rules:";
+            const string scoringSystem = "Scoring System:";
+            const string hints = "Hints:";
+            const string controls = "Controls:";
 
+            Console.Clear();
             Console.WriteLine("Welcome to the Word Guessing Game! Here's everything you need to know to play and enjoy:");
 
-            PrintSection("Objective: ",
+            PrintSection(objective,
                 "Guess the hidden word letter by letter before you run out of lives!");
-            PrintSection("Game Rules: ",
+            PrintSection(gameRules,
                 "\n- Start with 7 lives\n" +
                 "- Each incorrect guess costs 1 life\n" +
                 "- Correct guesses reveal letters in the word\n" +
                 "- Complete all 50 levels to win");
-            PrintSection("Scoring System: ",
+            PrintSection(scoringSystem,
                 "\n- Base of 10 points for each level\n" +
                 "- minus(-) 1 point for each wrong guess in a level\n" +
                 "- Points earned = 10 - (number of wrong guesses)\n" +
                 "- Track your high score on the leaderboard");
-            PrintSection("Hints: ",
+            PrintSection(hints,
                 "\n- Each word comes with a helpful hint\n" +
                 "- Use hints strategically when stuck!");
-            PrintSection("Controls: ",
+            PrintSection(controls,
                 "\n- Type single letters to guess\n" +
                 "- Use number keys to navigate menus\n");
             Console.WriteLine("Good luck, and enjoy the game!\n\n");
             
-
             WaitForAcknowledgement();
         }
 
@@ -765,35 +743,44 @@ namespace GuessingWordGame
 
         static void HandleAboutMe()
         {
-            Console.Clear();
+            const string introTitle = "Introduction:";
+            const string backGroundTitle = "Background:";
+            const string journeyTitle = "Game Development Journey:";
+            const string contactTitle = "Contact Me:";
 
-            PrintAboutSection("Introduction: ",
+            Console.Clear();
+            PrintAboutSection(introTitle,
                 "Welcome to the Word Guessing Game, created by me — Jayboy Casubuan." +
                 "\nI'm a solo game developer passionate about designing fun and challenging games for players.");
 
-            PrintAboutSection("Background: ",
+            PrintAboutSection(backGroundTitle,
                 "Since childhood, I've dreamed of creating my own game. Now, as an IT student, " +
                 "\nI'm taking my first steps toward that goal. I have experience with C#, Java, and problem-solving." +
                 "\nThis game reflects my skills in logic, OOP, and multi-layer programming.");
 
-            PrintAboutSection("Game Development Journey: ",
+            PrintAboutSection(journeyTitle,
                 "I’ve always enjoyed games that challenge the mind. Word Guessing Game was inspired by Hangman — " +
                 "\na favorite of mine — but enhanced with levels, hints, and a points system for extra excitement.");
 
-            PrintAboutSection("Contact Me: ",
+            PrintAboutSection(contactTitle,
                 "I'd love to hear your feedback! Feel free to reach out through any of the links below:\n" +
                 "\nEmail   : jayboy.casubuan.08@gmail.com" +
                 "\nGitHub  : github.com/jCasubuan" +
                 "\nLinkedIn: linkedin.com/in/jayboy-casubuan");
 
+            DisplayCopyright();
+            WaitForAcknowledgement();
+        }
+
+        private static void DisplayCopyright()
+        {   
+            int currentYear = DateTime.Now.Year;
             Console.WriteLine(new string('-', 50));
-            Console.WriteLine("\nThank you for playing Word Guessing Game! Your support means a lot to me.");
+            Console.WriteLine("Thank you for playing Word Guessing Game! Your support means a lot to me.");
             Console.WriteLine("I hope you enjoy the game as much as I enjoyed creating it!\n");
 
-            Console.WriteLine("Word Guessing Game - Est. 2025");
-            Console.WriteLine("Copyright (c) 2025 Jayboy Casubuan. All Rights Reserved.\n");
-
-            WaitForAcknowledgement();
+            Console.WriteLine($"Word Guessing Game - Est. {currentYear}");
+            Console.WriteLine($"Copyright (c) {currentYear} Jayboy Casubuan. All Rights Reserved.\n");
         }
 
         static void PrintAboutSection(string title, string content)
@@ -812,7 +799,6 @@ namespace GuessingWordGame
                 Console.WriteLine("You haven't played the game yet.");
                 Console.WriteLine("Please start a new game first before you can load a previous session.\n");
                 WaitForAcknowledgement();
-
                 return;
             }
 
@@ -824,9 +810,14 @@ namespace GuessingWordGame
                 return;
             }
 
+            ResumeGameSession(userName, lastLevel);
+
+        }
+
+        private static void ResumeGameSession(string userName, int lastLevel)
+        {
             Console.WriteLine($"Welcome back, {userName}!");
             Console.WriteLine($"You left off at Level {lastLevel} with {gameProcess.GetPlayerScore(userName)} points.\n");
-
             bool continueGame = YesNoConfirmation("Ready to continue? (yes/no): ");
 
             if (continueGame)
@@ -903,8 +894,21 @@ namespace GuessingWordGame
 
             EndGameMessage(userName);
             return false;
-        } 
+        }
 
+        static void EndGameMessage(string userName)
+        {
+            int score = gameProcess.GetPlayerScore(userName);
+
+            Console.WriteLine("====================================================");
+            Console.WriteLine($"CONGRATULATIONS, {userName}!");
+            Console.WriteLine($"You completed all levels!");
+            Console.WriteLine($"Your total score: {score} points.");
+            Console.WriteLine("You're a Hangman Master!");
+            Console.WriteLine("====================================================\n");
+
+            WaitForAcknowledgement();
+        }
 
 
     }

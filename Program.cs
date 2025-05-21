@@ -25,15 +25,7 @@ namespace GuessingWordGame
             "[3] View points", 
             "[4] Game mechanics",
             "[5] Log out\n" 
-        };
-
-        static string[] gameDifficulty = new string[] // coming soon hehe
-        {
-            "[1] easy",
-            "[2] medium",
-            "[3] hard",
-            "[1] god-mode"
-        };
+        };      
 
         public static GuessingGameProcess gameProcess = new GuessingGameProcess();
 
@@ -88,7 +80,7 @@ namespace GuessingWordGame
         }
 
 
-        static void DisplayWelcomeMessage()
+        private static void DisplayWelcomeMessage()
         {
             string gameTitle = ">>> GUESS IT! <<<";
             string welcomeMessage = "Welcome to the Best Word Guessing Game of all time!";
@@ -127,7 +119,7 @@ namespace GuessingWordGame
             Console.Clear();
         }
 
-        static string CenterConsoleText(string text)
+        private static string CenterConsoleText(string text)
         {
             return text.PadLeft((Console.WindowWidth + text.Length) / 2);
         }
@@ -140,7 +132,7 @@ namespace GuessingWordGame
             }
         }
 
-        static void DisplayMainMenu()
+        private static void DisplayMainMenu()
         {
             Console.Clear();
             Console.WriteLine($"===== Main menu =====");
@@ -149,7 +141,7 @@ namespace GuessingWordGame
             DisplayMenuOptions(mainMenuActions);
         }
 
-        static void DisplayPlayerMenu(string userName)
+        private static void DisplayPlayerMenu(string userName)
         {
             Console.Clear();
             Console.WriteLine($"===== Player Menu: {userName} =====");
@@ -211,21 +203,22 @@ namespace GuessingWordGame
             Console.WriteLine();
         }
         
-        static void DisplayLevelInfo(int playerLives, List<char> guessedWord, string userName, string hint, string difficulty, int currentLevel) 
+        private static void DisplayLevelInfo(int playerLives, List<char> guessedWord, string userName, string hint, string difficulty, int currentLevel) 
         {           
             int score = gameProcess.GetPlayerScore(userName);
+            string category = "IT related terminologies";
 
             Console.Clear();
             Console.WriteLine($"===== Guess it!: Word Guessing Game =====");
             Console.WriteLine($"\nLEVEL: {currentLevel}\n");
             Console.WriteLine($"Your lives remaining: {playerLives} | Points: {score}\n");
-            Console.WriteLine("Category: IT related terminologies");
+            Console.WriteLine($"Category: {category}");
             Console.WriteLine($"Difficulty: {difficulty}");
             Console.WriteLine($"\nHint: {hint}");
             Console.WriteLine("\nWord to guess: " + string.Join(" ", guessedWord)); // for better spacing           
         }
 
-        static void ViewPoints(string userName)
+        private static void ViewPoints(string userName)
         {
             Console.Clear();
 
@@ -237,7 +230,7 @@ namespace GuessingWordGame
             WaitForAcknowledgement();
         }
 
-        static void HandleLogin()
+        private static void HandleLogin()
         {
             Console.Clear();
             Console.WriteLine("===== Login =====\n");
@@ -282,7 +275,7 @@ namespace GuessingWordGame
             return false;
         }
 
-        static void HandleRegistration()
+        private static void HandleRegistration()
         {
             Console.Clear();
             Console.WriteLine("===== Account Registration =====\n");
@@ -330,7 +323,7 @@ namespace GuessingWordGame
             return AcceptNonEmptyPassword("Enter your password: ");
         }
 
-        static void DisplayLoggedInMenu(string userName)
+        private static void DisplayLoggedInMenu(string userName)
         {
             bool loggedIn = true;
 
@@ -407,7 +400,7 @@ namespace GuessingWordGame
             return userInput;
         }
 
-        static string AcceptNonEmptyPassword(string displayText)
+        private static string AcceptNonEmptyPassword(string displayText)
         {
             string userInput;
 
@@ -425,7 +418,7 @@ namespace GuessingWordGame
             return userInput;
         }
 
-        static string ReadPassword()
+        private static string ReadPassword()
         {
             string password = "";
             ConsoleKeyInfo key;
@@ -450,7 +443,7 @@ namespace GuessingWordGame
             return password;
         }
 
-        static bool StartGame(string userName)
+        private static bool StartGame(string userName)
         {
             IReadOnlyList<WordHint> wordHints = gameProcess.GetWordHints();
             int totalLevel = gameProcess.TotalLevel; 
@@ -495,7 +488,7 @@ namespace GuessingWordGame
                             {
                                 ExitMidGameLosing( userName); // method calling                               
                             }
-                            return false; // ← return to main menu
+                            return false; // return to main menu
                         }
 
                         gameProcess.ResetLives(); // Reset lives if they choose to try again
@@ -520,7 +513,7 @@ namespace GuessingWordGame
             return false; // After full game completion, return to menu
         }
 
-        static bool PlayLevel(string userName, string wordToGuess, string hint, string difficulty,int currentLevel,int totalLevel)
+        private static bool PlayLevel(string userName, string wordToGuess, string hint, string difficulty,int currentLevel,int totalLevel)
         {
             List<char> guessedWord = gameProcess.InitializeGuessedWord(wordToGuess);
 
@@ -547,7 +540,7 @@ namespace GuessingWordGame
             return CheckLevelResult(guessedWord, wordToGuess);
         }
 
-        static bool HandleLevelProgression(string userName, int level, int totalLevel)
+        private static bool HandleLevelProgression(string userName, int level, int totalLevel)
         {
             int earnedPoints = gameProcess.CalculateScoreForLevel();
             int wrongGuesses = gameProcess.GetWrongGuessesInLevel();
@@ -585,7 +578,7 @@ namespace GuessingWordGame
             WaitForAcknowledgement();
         }
 
-        static bool CheckLevelResult(List<char> guessedWord, string wordToGuess)
+        private static bool CheckLevelResult(List<char> guessedWord, string wordToGuess)
         {
             if (gameProcess.IsWordGuessed(guessedWord, wordToGuess))
             {
@@ -600,7 +593,7 @@ namespace GuessingWordGame
             return false;
         }
        
-        static void ExitOnFirstTry(string userName)
+        private static void ExitOnFirstTry(string userName)
         {
             Console.WriteLine("You gave up on the first level.");
             Console.WriteLine("Unfortunately, you didn't earn any points.");
@@ -610,7 +603,7 @@ namespace GuessingWordGame
 
         }
 
-        static void ExitMidGameLosing(string userName)
+        private static void ExitMidGameLosing(string userName)
         {
             int score = gameProcess.GetPlayerScore(userName);
 
@@ -646,7 +639,7 @@ namespace GuessingWordGame
             }
         }
 
-        static char GetValidGuess()
+        private static char GetValidGuess()
         {
             while (true)
             {
@@ -676,7 +669,7 @@ namespace GuessingWordGame
             }
         }
 
-        static void DisplayErrorMessage(string message)
+        private static void DisplayErrorMessage(string message)
         {
             Console.WriteLine(message);
             Console.WriteLine();
@@ -701,7 +694,7 @@ namespace GuessingWordGame
             return input == "yes";
         }  
 
-        static void ShowGameMechanics()
+        private static void ShowGameMechanics()
         {
             const string objective = "Objective:";
             const string gameRules = "Game Rules:";
@@ -735,13 +728,13 @@ namespace GuessingWordGame
             WaitForAcknowledgement();
         }
 
-        static void PrintSection(string title, string content)
+        private static void PrintSection(string title, string content)
         {
             Console.Write($"\n{title}");
             Console.WriteLine(content);
         }
 
-        static void HandleAboutMe()
+        private static void HandleAboutMe()
         {
             const string introTitle = "Introduction:";
             const string backGroundTitle = "Background:";
@@ -783,13 +776,13 @@ namespace GuessingWordGame
             Console.WriteLine($"Copyright (c) {currentYear} Jayboy Casubuan. All Rights Reserved.\n");
         }
 
-        static void PrintAboutSection(string title, string content)
+        private static void PrintAboutSection(string title, string content)
         {
             Console.WriteLine($"\n{title}");
             Console.WriteLine(content);
         }
 
-        static void LoadGame(string userName)
+        private static void LoadGame(string userName)
         {
             int lastLevel = gameProcess.GetLastCompletedLevel(userName);
             int score = gameProcess.GetPlayerScore(userName);
@@ -830,7 +823,7 @@ namespace GuessingWordGame
             }
         }
 
-        static bool StartGameFromLevel(string userName, int startLevel) // variant of StartGame(), for the load game process,
+        private static bool StartGameFromLevel(string userName, int startLevel) // variant of StartGame(), for the load game process,
                                                                         // separate from the main flow of the game where all data are fresh
         {
             IReadOnlyList<WordHint> wordHints = gameProcess.GetWordHints();
@@ -896,7 +889,7 @@ namespace GuessingWordGame
             return false;
         }
 
-        static void EndGameMessage(string userName)
+        private static void EndGameMessage(string userName)
         {
             int score = gameProcess.GetPlayerScore(userName);
 

@@ -13,34 +13,16 @@ namespace GuessingGameDataService
         private int playerIdCounter = 1;
         private Dictionary<string, Player> players = new Dictionary<string, Player>();
 
-        public bool RegisterPlayer(string fullName, string userName, string password)
+        public bool RegisterPlayer(Player player)
         {
-            if (players.ContainsKey(userName))
+            if (players.ContainsKey(player.UserName))
             {
                 return false;
             }
-
-            players[userName] = new Player(fullName, userName, password)
-            {
-                PlayerId = playerIdCounter++
-            };
-           
+            player.PlayerId = playerIdCounter++;
+            players[player.UserName] = player;
             return true;
-        }
-
-        public bool VerifyLogin(string userName, string password)
-        {
-            if (players.ContainsKey(userName))
-            {
-                return players[userName].Password == password;
-            }
-            return false;
-        }
-
-        public bool PlayerExists(string userName)
-        {
-            return players.ContainsKey(userName);
-        }
+        }        
 
         public int GetPlayerScore(string userName)
         {
@@ -68,7 +50,36 @@ namespace GuessingGameDataService
                 }
             }
         }
+        
 
+        public void UpdatePlayerLevelProgress(string userName, int lastCompletedLevel)
+        {
+            if (players.ContainsKey(userName))
+            {
+                if (lastCompletedLevel > players[userName].LastCompletedLevel)
+                {
+                    players[userName].LastCompletedLevel = lastCompletedLevel; // for loading saved game
+                }
+            }
+        }
+
+        public int GetLastCompletedLevel(string userName)
+        {
+            if (players.ContainsKey(userName))
+                return players[userName].LastCompletedLevel;
+
+            return 0;
+        }
+
+        // not for text file
+        public bool VerifyLogin(string userName, string password)
+        {
+            if (players.ContainsKey(userName))
+            {
+                return players[userName].Password == password;
+            }
+            return false;
+        }
 
         public List<KeyValuePair<string, int>> GetLeaderboard()
         {
@@ -88,23 +99,9 @@ namespace GuessingGameDataService
             return leaderboard;
         }
 
-        public void UpdatePlayerLevelProgress(string userName, int lastCompletedLevel)
+        public bool PlayerExists(string userName)
         {
-            if (players.ContainsKey(userName))
-            {
-                if (lastCompletedLevel > players[userName].LastCompletedLevel)
-                {
-                    players[userName].LastCompletedLevel = lastCompletedLevel; // for loading saved game
-                }
-            }
-        }
-
-        public int GetLastCompletedLevel(string userName)
-        {
-            if (players.ContainsKey(userName))
-                return players[userName].LastCompletedLevel;
-
-            return 0;
+            return players.ContainsKey(userName);
         }
 
 

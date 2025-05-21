@@ -146,7 +146,8 @@ namespace GuessingGame_BusinessLogic
 
         public bool RegisterPlayer(string fullName, string userName, string password)
         {
-            return playerDataService.RegisterPlayer(fullName, userName, password);
+            Player newPlayer = new Player(fullName, userName, password);
+            return playerDataService.RegisterPlayer(newPlayer);
         }
 
         public void AddToPlayerScore(string userName, int pointsToAdd)

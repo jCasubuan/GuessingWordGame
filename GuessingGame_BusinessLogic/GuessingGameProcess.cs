@@ -15,13 +15,13 @@ namespace GuessingGame_BusinessLogic
         private int wrongGuessesInLevel = 0;
 
         private GameDataService gameDataService;
-        private PlayerDataService playerDataService;
+        PlayerDataService playerDataService = new PlayerDataService();
         private AdminDataService adminDataService;
 
         public GuessingGameProcess()
         {
             gameDataService = new GameDataService();
-            playerDataService = new PlayerDataService();
+            //playerDataService = new PlayerDataService();
             adminDataService = new AdminDataService();
         }
 
@@ -124,7 +124,7 @@ namespace GuessingGame_BusinessLogic
             return wrongGuessesInLevel;
         }
 
-        public List<KeyValuePair<string, int>> GetLeaderboard()
+        public List<LeaderboardEntry> GetLeaderboard()
         {
             return playerDataService.GetLeaderboard();
         }
@@ -136,7 +136,7 @@ namespace GuessingGame_BusinessLogic
 
         public bool VerifyLogin(string userName, string passWord)
         {
-            return playerDataService.VerifyLogin(userName, passWord);
+            return playerDataService.GetPlayerByCredentials(userName, passWord);
         }
 
         public bool PlayerExists (string userName)
@@ -165,6 +165,7 @@ namespace GuessingGame_BusinessLogic
             return playerDataService.GetLastCompletedLevel(userName);
         }
 
+        //Admin login
         public bool ValidateAdminLogin(string username, string password)
         {
             return adminDataService.ValidateAdminLogin(username, password);
@@ -173,24 +174,24 @@ namespace GuessingGame_BusinessLogic
         // topic: Player data, for admin data processsing
         public List<Player> GetAllPlayers()
         {
-            return playerDataService.GetAllPlayers();
+            return adminDataService.GetAllPlayers();
         }
 
         public Player SearchPlayerByInput(string adminInput)
         {           
            if (int.TryParse(adminInput, out int playerId))
            {
-                return playerDataService.SearchById(playerId);
+                return adminDataService.SearchById(playerId);
            }
             else
             {   
-                return playerDataService.SearchByUsername(adminInput);
+                return adminDataService.SearchByUsername(adminInput);
             }
         }
 
         public bool DeletePlayer(string userName)
         {            
-            return playerDataService.DeletePlayer(userName);
+            return adminDataService.DeletePlayer(userName);
         }
 
         public WordHint SearchForWord(string word)

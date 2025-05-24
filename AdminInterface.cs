@@ -636,12 +636,12 @@ namespace GuessingWordGame
 
             foreach (var entry in leaderboard)
             {
-                if (entry.Key.Equals(username, StringComparison.OrdinalIgnoreCase))
+                if (entry.UserName.Equals(username, StringComparison.OrdinalIgnoreCase))
                 {
                     Console.WriteLine($"\nPlayer Found!\n");
                     Console.WriteLine($"Rank: #{rank}");
-                    Console.WriteLine($"Username: {entry.Key}");
-                    Console.WriteLine($"Score: {entry.Value}\n");
+                    Console.WriteLine($"Username: {entry.UserName}");
+                    Console.WriteLine($"Score: {entry.HighScore}\n");
                     return;
                 }
                 rank++;

@@ -1,0 +1,72 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "GuessingWordGame/1.0.0": {
+        "dependencies": {
+          "GuessingGame_BusinessLogic": "1.0.0"
+        },
+        "runtime": {
+          "GuessingWordGame.dll": {}
+        }
+      },
+      "GuessingGameCommon/1.0.0": {
+        "runtime": {
+          "GuessingGameCommon.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "GuessingGameDataService/1.0.0": {
+        "dependencies": {
+          "GuessingGameCommon": "1.0.0"
+        },
+        "runtime": {
+          "GuessingGameDataService.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "GuessingGame_BusinessLogic/1.0.0": {
+        "dependencies": {
+          "GuessingGameCommon": "1.0.0",
+          "GuessingGameDataService": "1.0.0"
+        },
+        "runtime": {
+          "GuessingGame_BusinessLogic.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "GuessingWordGame/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "GuessingGameCommon/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "GuessingGameDataService/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "GuessingGame_BusinessLogic/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

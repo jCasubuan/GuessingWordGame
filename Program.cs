@@ -181,7 +181,7 @@ namespace GuessingWordGame
                 int rank = 1;
                 foreach (var entry in leaderboard)
                 {
-                    Console.WriteLine($"{rank}\t{entry.Key}\t\t{entry.Value}");
+                    Console.WriteLine($"{rank}\t{entry.UserName}\t\t{entry.HighScore}");
                     rank++;
                 }
             }

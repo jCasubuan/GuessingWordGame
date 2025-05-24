@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "GuessingGameDataService/1.0.0": {
+        "dependencies": {
+          "GuessingGameCommon": "1.0.0"
+        },
+        "runtime": {
+          "GuessingGameDataService.dll": {}
+        }
+      },
+      "GuessingGameCommon/1.0.0": {
+        "runtime": {
+          "GuessingGameCommon.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "GuessingGameDataService/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "GuessingGameCommon/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -211,6 +211,19 @@ namespace GuessingGameDataService
             }
         }
 
+        public void ResetPlayerScore(string userName)
+        {
+            ReadJsonDataFromFile();
+            foreach (var player in players)
+            {
+                if (player.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase))
+                {
+                    player.Scores = 0;
+                    WriteJsonDataToFile();
+                    break;
+                }
+            }
+        }
 
     }
 }

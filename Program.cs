@@ -450,10 +450,13 @@ namespace GuessingWordGame
 
             Console.Clear();
 
+            gameProcess.ResetPlayerScore(userName);
+
             for (int level = 0; level < totalLevel; level++)
             {               
                 gameProcess.ResetLives();
                 gameProcess.ResetWrongGuesses();
+
 
                 WordHint current = wordHints[level]; 
                 string wordToGuess = current.Word;   
@@ -504,7 +507,7 @@ namespace GuessingWordGame
 
                     if (!HandleLevelProgression(userName, level, totalLevel))
                     {
-                        return false; // ← return to main menu
+                        return false; 
                     }
                 }
             }

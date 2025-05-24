@@ -103,6 +103,14 @@ namespace GuessingGameDataService
             }
         }
 
+        public void ResetPlayerScore(string userName)
+        {
+            if (players.ContainsKey(userName))
+            {
+                players[userName].Scores = 0;
+            }
+        }
+
         
 
         

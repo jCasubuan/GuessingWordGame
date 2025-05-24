@@ -14,9 +14,10 @@ namespace GuessingGameDataService
 
         public PlayerDataService()
         {
-            //playerDataService = new TextFilePlayerDataService();
             //playerDataService = new InMemoryPlayerDataService();
-            playerDataService = new JsonFilePlayerDataService();
+            //playerDataService = new TextFilePlayerDataService();
+            //playerDataService = new JsonFilePlayerDataService();
+            playerDataService = new DBPlayerDataService();
         }
 
         //CREATE
@@ -62,7 +63,12 @@ namespace GuessingGameDataService
             playerDataService.UpdatePlayerLevelProgress(userName, lastCompletedLevel);
         }
 
-        
+        public void ResetPlayerScore(string userName)
+        {
+            playerDataService.ResetPlayerScore(userName);
+        }
+
+
 
 
         //this method is for admin

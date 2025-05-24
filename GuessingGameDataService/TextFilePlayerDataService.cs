@@ -257,6 +257,20 @@ namespace GuessingGameDataService
             }
         }
 
+        public void ResetPlayerScore(string userName)
+        {
+            var players = GetAccounts();
+            foreach (var player in players)
+            {
+                if (player.UserName == userName)
+                {
+                    player.Scores = 0;
+                    UpdatePlayerInFile(player);
+                    break;
+                }
+            }
+        }
+
         
 
         

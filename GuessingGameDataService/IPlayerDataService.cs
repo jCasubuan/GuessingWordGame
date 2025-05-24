@@ -22,5 +22,6 @@ namespace GuessingGameDataService
         // UPDATE
         void AddToPlayerScore(string userName, int pointsToAdd);
         void UpdatePlayerLevelProgress(string usernName, int lastCompletedLevel);
+        void ResetPlayerScore(string userName);
     }
 }

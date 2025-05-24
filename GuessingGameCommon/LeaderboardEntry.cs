@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace GuessingGameCommon
 {
     public class LeaderboardEntry
-    {
+    {   
+        public int Rank { get; set; }
         public string UserName { get; set; }
         public int HighScore { get; set; }
 
@@ -15,6 +16,7 @@ namespace GuessingGameCommon
         {
             UserName = userName;
             HighScore = highScore;
+            Rank = 0;
         }
     }
 }

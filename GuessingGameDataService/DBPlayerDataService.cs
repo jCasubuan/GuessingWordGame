@@ -13,36 +13,74 @@ namespace GuessingGameDataService
 
         public DBPlayerDataService()
         {
-            sqlConnection = new SqlConnection(connectionString);    
+            sqlConnection = new SqlConnection(connectionString);
+        }
+
+        private void SortLeaderboardByScore(List<LeaderboardEntry> leaderboard)
+        {
+            for (int outerIndex = 0; outerIndex < leaderboard.Count; outerIndex++)
+            {
+                for (int currentIndex = 0; currentIndex < leaderboard.Count - outerIndex - 1; currentIndex++)
+                {
+                    int nextIndex = currentIndex + 1;
+                    if (leaderboard[currentIndex].HighScore < leaderboard[nextIndex].HighScore)
+                    {
+                        var temp = leaderboard[currentIndex];
+                        leaderboard[currentIndex] = leaderboard[nextIndex];
+                        leaderboard[nextIndex] = temp;
+                    }
+                }
+            }
+        }
+
+        private void AssignPlayerRanks(List<LeaderboardEntry> leaderboard)
+        {
+            if (leaderboard.Count == 0)
+            {
+                return;
+            }
+
+            leaderboard[0].Rank = 1; 
+
+            for (int playerIndex = 1; playerIndex < leaderboard.Count; playerIndex++)
+            {
+                if (leaderboard[playerIndex].HighScore == leaderboard[playerIndex - 1].HighScore)
+                {
+                    leaderboard[playerIndex].Rank = leaderboard[playerIndex - 1].Rank;
+                }
+                else
+                {
+                    leaderboard[playerIndex].Rank = playerIndex + 1;
+                }
+            }
         }
 
         //CREATE
         public bool RegisterPlayer(Player player)
         {
-            var insertStatement = "INSERT INTO Players (FullName, UserName, Password, Scores, HighScore, LastCompletedLevel )" +
-                                   "VALUES (@FullName, @UserName, @Password, @Scores, @HighScore, @LastCompletedLevel)";
+            string insertStatement = "INSERT INTO Players (FullName, UserName, Password, Scores, HighScore, LastCompletedLevel) " +
+                                     "VALUES (@FullName, @UserName, @Password, @Scores, @HighScore, @LastCompletedLevel)";
 
-            SqlCommand insertCommand = new SqlCommand(insertStatement, sqlConnection);
+            using (var sqlConnection = new SqlConnection(connectionString))
+            using (var insertCommand = new SqlCommand(insertStatement, sqlConnection))
+            {
+                insertCommand.Parameters.AddWithValue("@FullName", player.FullName);
+                insertCommand.Parameters.AddWithValue("@UserName", player.UserName);
+                insertCommand.Parameters.AddWithValue("@Password", player.Password);
+                insertCommand.Parameters.AddWithValue("@Scores", player.Scores);
+                insertCommand.Parameters.AddWithValue("@HighScore", player.HighScore);
+                insertCommand.Parameters.AddWithValue("@LastCompletedLevel", player.LastCompletedLevel);
 
-            insertCommand.Parameters.AddWithValue("@FullName", player.FullName);
-            insertCommand.Parameters.AddWithValue("@UserName", player.UserName);
-            insertCommand.Parameters.AddWithValue("@Password", player.Password);
-            insertCommand.Parameters.AddWithValue("@Scores", player.Scores);
-            insertCommand.Parameters.AddWithValue("@HighScore", player.HighScore);
-            insertCommand.Parameters.AddWithValue("@LastCompletedLevel", player.LastCompletedLevel);
-            sqlConnection.Open();
-
-            int rowsAffected = insertCommand.ExecuteNonQuery();
-            sqlConnection.Close();
-
-            return rowsAffected > 0;
-
+                sqlConnection.Open();
+                int rowsAffected = insertCommand.ExecuteNonQuery();
+                return rowsAffected > 0;
+            }
         }
 
         //READ
         public bool PlayerExists(string userName)
         {
-            const string query = "SELECT COUNT(*) FROM Players WHERE UserName = @UserName";
+            string query = "SELECT COUNT(*) FROM Players WHERE UserName = @UserName";
 
             using (var sqlConnection = new SqlConnection(connectionString))
             using (var command = new SqlCommand(query, sqlConnection))
@@ -58,38 +96,141 @@ namespace GuessingGameDataService
 
         public int GetPlayerScore(string userName)
         {
-            throw new NotImplementedException();
+            string query = "SELECT Scores FROM Players WHERE UserName = @UserName";
+
+            using (var sqlConnection = new SqlConnection(connectionString))
+            using (var command = new SqlCommand(query, sqlConnection))
+            {
+                command.Parameters.AddWithValue("@UserName", userName);
+                sqlConnection.Open();
+                object result = command.ExecuteScalar();
+
+                if (result == null)
+                {
+                    return 0;
+                }
+                return Convert.ToInt32(result);
+            }
         }
 
         public int GetLastCompletedLevel(string userName)
         {
-            throw new NotImplementedException();
+            string query = "SELECT LastCompletedLevel FROM Players WHERE UserName = @UserName";
+
+            using (var sqlConnection = new SqlConnection(connectionString))
+            using ( var command = new SqlCommand(query, sqlConnection))
+            {
+                command.Parameters.AddWithValue("@UserName", userName );
+                sqlConnection.Open();
+                object result = command.ExecuteScalar();
+
+                if (result == null)
+                {
+                    return 0;
+                }
+                return Convert.ToInt32(result);
+            }
+
         }
 
         public bool GetPlayerByCredentials(string userName, string password)
         {
-            throw new NotImplementedException();
+            string query = "SELECT COUNT(*) FROM Players WHERE UserName = @UserName AND Password = @Password";
+
+            using (var sqlConnection = new SqlConnection(connectionString))
+            using (var command = new SqlCommand( query, sqlConnection))
+            {
+                command.Parameters.AddWithValue("@UserName", userName);
+                command.Parameters.AddWithValue("@Password", password);
+
+                sqlConnection.Open();
+                int count = (int)command.ExecuteScalar();
+                return count > 0;
+            }
         }
 
         public List<LeaderboardEntry> GetLeaderboard()
         {
-            throw new NotImplementedException();
+            const string query = "SELECT UserName, HighScore FROM Players WHERE HighScore > 0 ORDER BY HighScore DESC";
+            var leaderboard = new List<LeaderboardEntry>();
+
+            try
+            {
+                using (var sqlConnection = new SqlConnection(connectionString))
+                using (var command = new SqlCommand(query, sqlConnection))
+                {
+                    sqlConnection.Open();
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string userName = reader["UserName"].ToString(); 
+                            int highScore = Convert.ToInt32(reader["HighScore"]);
+                            leaderboard.Add(new LeaderboardEntry(userName, highScore));
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // Log internal error (ex. database connection issues, SQL syntax errors)
+                return new List<LeaderboardEntry>(); 
+            }
+            AssignPlayerRanks(leaderboard);
+            return leaderboard;
         }
 
         //UPDATE
         public void AddToPlayerScore(string userName, int pointsToAdd)
         {
-            throw new NotImplementedException();
+            string query = @"
+                            UPDATE Players 
+                            SET Scores = Scores + @PointsToAdd,
+                                HighScore = CASE 
+                                    WHEN (Scores + @PointsToAdd) > HighScore 
+                                    THEN (Scores + @PointsToAdd) 
+                                    ELSE HighScore 
+                                END 
+                            WHERE UserName = @UserName";
+
+
+            using (var sqlConnection = new SqlConnection(connectionString))
+            using ( var command = new SqlCommand( query, sqlConnection) )
+            {
+                command.Parameters.AddWithValue("@UserName", userName);
+                command.Parameters.AddWithValue("@PointsToAdd", pointsToAdd);
+                sqlConnection.Open ();
+                command.ExecuteNonQuery();
+            }
         }  
 
-        public void UpdatePlayerLevelProgress(string usernName, int lastCompletedLevel)
+        public void UpdatePlayerLevelProgress(string userName, int lastCompletedLevel)
         {
-            throw new NotImplementedException();
+            string query = "UPDATE Players SET LastCompletedLevel = @LastCompletedLevel WHERE UserName = @UserName AND LastCompletedLevel < @LastCompletedLevel";
+            
+            using (var sqlConnection = new SqlConnection(connectionString))
+            using (var command = new SqlCommand(query,sqlConnection))
+            {
+                command.Parameters.AddWithValue("@UserName", userName);
+                command.Parameters.AddWithValue("@LastCompletedLevel", lastCompletedLevel);
+
+                sqlConnection.Open();
+                command.ExecuteNonQuery();
+            }
         }
 
         public void ResetPlayerScore(string userName)
         {
-            throw new NotImplementedException();
+            string query = "UPDATE Players SET Scores = 0 WHERE UserName = @UserName";
+
+            using (var sqlConnection = new SqlConnection( connectionString))
+            using ( var command = new SqlCommand(query, sqlConnection))
+            {
+                command.Parameters.AddWithValue("@UserName", userName);
+
+                sqlConnection.Open();
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

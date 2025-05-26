@@ -1,6 +1,6 @@
 # Visual Studio files
 .vs/
-# bin/
+bin/
 obj/
 *.user
 *.suo

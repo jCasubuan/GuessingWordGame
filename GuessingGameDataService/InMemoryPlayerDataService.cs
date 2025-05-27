@@ -10,7 +10,7 @@ namespace GuessingGameDataService
     public class InMemoryPlayerDataService : IPlayerDataService
     {
         private int playerIdCounter = 1;
-        private Dictionary<string, Player> players = new Dictionary<string, Player>();
+        public static Dictionary<string, Player> players = new Dictionary<string, Player>();
 
         private void SortLeaderboardByScore(List<LeaderboardEntry> leaderboard)
         {
@@ -49,8 +49,6 @@ namespace GuessingGameDataService
             }
             return leaderboard;
         }
-
-
 
         //CREATE
         public bool RegisterPlayer(Player player)

@@ -13,11 +13,6 @@ namespace GuessingGameDataService
             EnsureFileExists();
         }
 
-        //private void GetDataFromFile()
-        //{
-        //    var players = File.ReadAllLines(filePath);
-        //}
-
         private void EnsureFileExists()
         {
             if (!File.Exists(FilePath))
@@ -63,7 +58,7 @@ namespace GuessingGameDataService
             {
                 formattedLines.Add(FormatPlayerData(player));
             }
-            File.WriteAllLines(FilePath, formattedLines.ToArray());
+            File.WriteAllLines(FilePath, formattedLines);
         }
 
         private int GeneratePlayerId(List<Player> existingPlayers)
@@ -299,41 +294,6 @@ namespace GuessingGameDataService
                 }
             }
         }
-
-        
-
-        
-        
-        
-
-
-
-
-
-        // for admin
-        public bool DeleteAccounts(string userName)
-        {
-            var players = GetAccounts();
-            bool found = false;
-
-            for (int i = 0; i < players.Count; i++)
-            {
-                if (players[i].UserName == userName)
-                {
-                    players.RemoveAt(i);
-                    found = true;
-                    break;
-                }
-            }
-
-            if (found)
-            {
-                SaveAllPlayers(players);
-                return true;
-            }
-            return false;
-        }
-
 
 
     }

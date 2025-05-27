@@ -16,23 +16,6 @@ namespace GuessingGameDataService
             sqlConnection = new SqlConnection(connectionString);
         }
 
-        private void SortLeaderboardByScore(List<LeaderboardEntry> leaderboard)
-        {
-            for (int outerIndex = 0; outerIndex < leaderboard.Count; outerIndex++)
-            {
-                for (int currentIndex = 0; currentIndex < leaderboard.Count - outerIndex - 1; currentIndex++)
-                {
-                    int nextIndex = currentIndex + 1;
-                    if (leaderboard[currentIndex].HighScore < leaderboard[nextIndex].HighScore)
-                    {
-                        var temp = leaderboard[currentIndex];
-                        leaderboard[currentIndex] = leaderboard[nextIndex];
-                        leaderboard[nextIndex] = temp;
-                    }
-                }
-            }
-        }
-
         private void AssignPlayerRanks(List<LeaderboardEntry> leaderboard)
         {
             if (leaderboard.Count == 0)
@@ -166,6 +149,7 @@ namespace GuessingGameDataService
                         {
                             string userName = reader["UserName"].ToString(); 
                             int highScore = Convert.ToInt32(reader["HighScore"]);
+
                             leaderboard.Add(new LeaderboardEntry(userName, highScore));
                         }
                     }

@@ -210,28 +210,48 @@ namespace GuessingGame_BusinessLogic
             return gameDataService.SearchForWord(word);
         }
 
-        public bool AddWordHint(string word, string hint, string diffulty)
+        public bool AddWordHint(string word, string hint, string difficulty)
         {
-            return gameDataService.AddWordHint(word, hint, diffulty);
+            string validatedWord = word.Trim();
+            string validatedHint = hint.Trim();
+            string validatedDifficulty = ValidateDifficulty(difficulty);
+
+            if (string.IsNullOrWhiteSpace(validatedWord))
+            {
+                return false;
+            }
+            WordHint newWordHint = new WordHint(validatedWord, validatedHint, validatedDifficulty);
+
+            return gameDataService.AddWordHint(newWordHint);
         }
 
-        public bool UpdateWord(string oldWord, string newWord, string newHint, string newDifficulty)
+        public bool UpdateWord(string oldWord, WordUpdateRequest updateRequest)
         {
-            if (string.IsNullOrWhiteSpace(oldWord) || string.IsNullOrWhiteSpace(newWord))
+            if (string.IsNullOrWhiteSpace(oldWord))
             {
                 return false;
             }
 
-            newWord = newWord.Trim();
-            newHint = newHint.Trim() ?? string.Empty;
-            newDifficulty = ValidateDifficulty(newDifficulty);
+            if (updateRequest == null || string.IsNullOrWhiteSpace(updateRequest.NewWord))
+            {
+                return false;
+            }
 
-            return gameDataService.UpdateWord(oldWord, newWord, newHint, newDifficulty);
+            updateRequest.NewWord = updateRequest.NewWord.Trim();
+            updateRequest.NewHint = updateRequest.NewHint.Trim() ?? string.Empty;
+            updateRequest.NewDifficulty = ValidateDifficulty(updateRequest.NewDifficulty);
+
+            return gameDataService.UpdateWord(oldWord, updateRequest);
         }
 
         private string ValidateDifficulty(string difficulty)
         {
-            string defaultDifficulty = difficulty.Trim().ToLower() ?? "medium";
+            string defaultDifficulty = difficulty.Trim().ToLower();
+
+            if (string.IsNullOrWhiteSpace(defaultDifficulty))
+            {
+                return "medium";
+            }
 
             switch (defaultDifficulty)
             {

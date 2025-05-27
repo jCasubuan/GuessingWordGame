@@ -1,21 +1,18 @@
 ﻿using GuessingGameCommon;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace GuessingGameDataService
 {
     public class JsonFilePlayerDataService : IPlayerDataService
     {   
-        private List<Player> players = new List<Player>();
+        private List<Player> players;
         private string jsonFilePath = "accounts.json";
 
         public JsonFilePlayerDataService()
-        {   
-
+        {
+            players = new List<Player>();
             ReadJsonDataFromFile();
         }
 
@@ -116,7 +113,6 @@ namespace GuessingGameDataService
         //CREATE
         public bool RegisterPlayer(Player player)
         {
-            ReadJsonDataFromFile();
             foreach (var existingPlayer  in players)
             {
                 if (existingPlayer.UserName.Equals(player.UserName, StringComparison.OrdinalIgnoreCase))
@@ -134,7 +130,6 @@ namespace GuessingGameDataService
         //READ
         public bool PlayerExists(string userName)
         {
-            ReadJsonDataFromFile();
             for (int i = 0;i < players.Count;i++)
             {
                 if (string.Equals(players[i].UserName, userName, StringComparison.OrdinalIgnoreCase))
@@ -147,7 +142,6 @@ namespace GuessingGameDataService
 
         public int GetPlayerScore(string userName)
         {
-            ReadJsonDataFromFile();
             for (int i = 0; i < players.Count; i++)
             {
                 if (string.Equals(players[i].UserName, userName, StringComparison.OrdinalIgnoreCase))
@@ -160,7 +154,6 @@ namespace GuessingGameDataService
 
         public int GetLastCompletedLevel(string userName)
         {
-            ReadJsonDataFromFile();
             for (int i = 0; i < players.Count; i++)
             {
                 if (string.Equals(players[i].UserName, userName, StringComparison.OrdinalIgnoreCase))
@@ -173,7 +166,6 @@ namespace GuessingGameDataService
 
         public bool GetPlayerByCredentials(string userName, string password)
         {
-            ReadJsonDataFromFile();
             for (int i = 0; i < players.Count; i++)
             {
                 if (string.Equals(players[i].UserName, userName, StringComparison.OrdinalIgnoreCase))
@@ -187,7 +179,6 @@ namespace GuessingGameDataService
         public List<LeaderboardEntry> GetLeaderboard()
         {
             List<LeaderboardEntry> leaderboard = new List<LeaderboardEntry>();
-            ReadJsonDataFromFile(); 
 
             foreach (var player in players)
             {
@@ -229,7 +220,6 @@ namespace GuessingGameDataService
 
         public void UpdatePlayerLevelProgress(string userName, int lastCompletedLevel)
         {
-            ReadJsonDataFromFile();
             for (int i = 0; i < players.Count; i++)
             {
                 if (string.Equals(players[i].UserName, userName, StringComparison.OrdinalIgnoreCase))
@@ -246,7 +236,6 @@ namespace GuessingGameDataService
 
         public void ResetPlayerScore(string userName)
         {
-            ReadJsonDataFromFile();
             foreach (var player in players)
             {
                 if (player.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase))

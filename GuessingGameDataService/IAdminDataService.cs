@@ -10,7 +10,7 @@ namespace GuessingGameDataService
     public interface IAdminDataService
     {
         //--- READ ---
-        bool ValidateAdminLogin(string username, string password);
+        bool GetAdminAccount(AdminAccount adminAccount);
         List<Player> GetAllPlayers();
         Player SearchById(int playerId);
         Player SearchByUsername(string userName);

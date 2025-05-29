@@ -20,75 +20,90 @@ namespace GuessingGameDataService
             sqlConnection = new SqlConnection(connectionString);
         }
 
-        private void ReSequenceAllWords(SqlConnection sqlConnection)
+        private bool DoesWordExist(string word)
         {
-            try
+            string query = "SELECT COUNT(*) FROM WordHints WHERE Word = @Word";
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
-                List<WordHint> currentWords = new List<WordHint>();
-                string selectQuery = "SELECT ID, No, Word, Hint, Difficulty FROM WordHints ORDER BY ID";
-                using (var selectCommand = new SqlCommand(selectQuery, sqlConnection))
+                using (SqlCommand command = new SqlCommand(query, sqlConnection))
                 {
-                    using (var reader = selectCommand.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            currentWords.Add(new WordHint
-                            {
-                                ID = Convert.ToInt32(reader["ID"]),
-                                No = Convert.ToInt32(reader["No"]), 
-                                Word = reader["Word"].ToString(),
-                                Hint = reader["Hint"].ToString(),
-                                Difficulty = reader["Difficulty"].ToString()
-                            });
-                        }
-                    }
-                }
-
-                int currentNo = 1;
-                foreach (var wordHint in currentWords)
-                {
-                    wordHint.No = currentNo++;
-                }
-
-                SqlTransaction transaction = null;
-                try
-                {
-                    transaction = sqlConnection.BeginTransaction();
-                    string updateQuery = "UPDATE WordHints SET No = @No WHERE ID = @ID";
-                    using (var updateCommand = new SqlCommand(updateQuery, sqlConnection, transaction))
-                    {
-                        updateCommand.Parameters.Add("@No", System.Data.SqlDbType.Int);
-                        updateCommand.Parameters.Add("@ID", System.Data.SqlDbType.Int);
-
-                        foreach (var wordHint in currentWords)
-                        {
-                            updateCommand.Parameters["@No"].Value = wordHint.No;
-                            updateCommand.Parameters["@ID"].Value = wordHint.ID;
-                            updateCommand.ExecuteNonQuery();
-                        }
-                    }
-                    transaction.Commit();
-                }
-                catch (Exception txEx)
-                {
-                    transaction?.Rollback(); 
-                    throw; 
+                    command.Parameters.AddWithValue("@Word", word);
+                    sqlConnection.Open();
+                    int count = (int)command.ExecuteScalar();
+                    return count > 0;
                 }
             }
-            catch (Exception ex)
+        }
+
+        private void ReSequenceAllWords(SqlConnection sqlConnection)
+        {
+            List<WordHint> currentWords = new List<WordHint>();
+            string selectQuery = "SELECT ID, No, Word, Hint, Difficulty FROM WordHints ORDER BY ID";
+
+            using (SqlCommand selectCommand = new SqlCommand(selectQuery, sqlConnection))
             {
+                using (SqlDataReader reader = selectCommand.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        currentWords.Add(new WordHint
+                        {
+                            ID = Convert.ToInt32(reader["ID"]),
+                            No = Convert.ToInt32(reader["No"]),
+                            Word = reader["Word"].ToString(),
+                            Hint = reader["Hint"].ToString(),
+                            Difficulty = reader["Difficulty"].ToString()
+                        });
+                    }
+                }
+            }
+
+            UpdateQuery(sqlConnection, currentWords);
+        }
+
+        private void UpdateQuery(SqlConnection sqlConnection, List<WordHint> currentWords)
+        {
+            int currentNo = 1;
+            foreach (var wordHint in currentWords)
+            {
+                wordHint.No = currentNo++;
+            }
+
+            using (SqlTransaction transaction = sqlConnection.BeginTransaction())
+            {
+                string query = "UPDATE WordHints SET No = @No WHERE ID = @ID";
+
+                using (SqlCommand updateCommand = new SqlCommand(query, sqlConnection, transaction))
+                {
+                    updateCommand.Parameters.Add("@No", System.Data.SqlDbType.Int);
+                    updateCommand.Parameters.Add("@ID", System.Data.SqlDbType.Int);
+
+                    foreach (var wordHint in currentWords)
+                    {
+                        updateCommand.Parameters["@No"].Value = wordHint.No;
+                        updateCommand.Parameters["@ID"].Value = wordHint.ID;
+                        updateCommand.ExecuteNonQuery();
+                    }
+                }
+
+                transaction.Commit();
             }
         }
 
         //--- CREATE ---
         public bool AddWordHint(WordHint wordHint)
-        {
+        {   
+            if (DoesWordExist(wordHint.Word))
+            {
+                return false;
+            }
+
             string insertStatement = "INSERT INTO WordHints (Word, Hint, Difficulty)" +
                                      "VALUES (@Word, @Hint, @Difficulty)";
 
-            using (var sqlConnection = new SqlConnection(connectionString))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
-                using (var insertCommand = new SqlCommand(insertStatement, sqlConnection))
+                using (SqlCommand insertCommand = new SqlCommand(insertStatement, sqlConnection))
                 {
                     insertCommand.Parameters.AddWithValue("@Word", wordHint.Word);
                     insertCommand.Parameters.AddWithValue("@Hint", wordHint.Hint);
@@ -110,74 +125,60 @@ namespace GuessingGameDataService
         //--- READ ---
         public IReadOnlyList<WordHint> GetAllWordHints()
         {
-            var wordHints = new List<WordHint>();       
+            var wordHints = new List<WordHint>();
             string query = "SELECT ID, No, Word, Hint, Difficulty FROM WordHints ORDER BY No";
 
-            using (var sqlConnection = new SqlConnection(connectionString))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
-                using (var command = new SqlCommand(query, sqlConnection))
+                using (SqlCommand command = new SqlCommand(query, sqlConnection))
                 {
-                    try
+                    sqlConnection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        sqlConnection.Open(); 
-                        using (var reader = command.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read()) 
+                            WordHint wordHint = new WordHint
                             {
-                                WordHint wordHint = new WordHint
-                                {
-                                    ID = Convert.ToInt32(reader["ID"]),
-                                    No = Convert.ToInt32(reader["No"]),
-                                    Word = reader["Word"].ToString(),
-                                    Hint = reader["Hint"].ToString(),
-                                    Difficulty = reader["Difficulty"].ToString()
-                                };
-                                wordHints.Add(wordHint); 
-                            }
+                                ID = Convert.ToInt32(reader["ID"]),
+                                No = Convert.ToInt32(reader["No"]),
+                                Word = reader["Word"].ToString(),
+                                Hint = reader["Hint"].ToString(),
+                                Difficulty = reader["Difficulty"].ToString()
+                            };
+                            wordHints.Add(wordHint);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        return new List<WordHint>().AsReadOnly();
                     }
                 }
             }
-            return wordHints.AsReadOnly(); 
+            return wordHints.AsReadOnly();
+
         }
 
         public WordHint SearchForWord(string word)
-        {   
+        {
             WordHint foundWord = null;
             string query = "SELECT ID, No, Word, Hint, Difficulty FROM WordHints WHERE LOWER(Word) = LOWER(@Word)";
 
-            using (var sqlConnection = new SqlConnection(connectionString))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
-                using (var command = new SqlCommand(query,sqlConnection))
+                using (SqlCommand command = new SqlCommand(query, sqlConnection))
                 {
-                    try
+                    command.Parameters.AddWithValue("@Word", word);
+                    sqlConnection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        command.Parameters.AddWithValue("@Word", word);
-                        sqlConnection.Open();
-                        using (var reader = command.ExecuteReader())
+                        if (reader.Read())
                         {
-                            if (reader.Read())
+                            foundWord = new WordHint
                             {
-                                foundWord = new WordHint
-                                {
-                                    ID = Convert.ToInt32(reader["ID"]),
-                                    No = Convert.ToInt32(reader["No"]),
-                                    Word = reader["Word"].ToString(),
-                                    Hint = reader["Hint"].ToString(),
-                                    Difficulty = reader["Difficulty"].ToString()
-                                };
-                            }
+                                ID = Convert.ToInt32(reader["ID"]),
+                                No = Convert.ToInt32(reader["No"]),
+                                Word = reader["Word"].ToString(),
+                                Hint = reader["Hint"].ToString(),
+                                Difficulty = reader["Difficulty"].ToString()
+                            };
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        return null;
-                    }
-                    
                 }
             }
             return foundWord;
@@ -186,41 +187,23 @@ namespace GuessingGameDataService
         //--- UPDATE ---
         public bool UpdateWord(string oldWord, WordUpdateRequest updateRequest)
         {
-            string updateStatement = @"
-                            UPDATE WordHints
-                            SET Word = @NewWord,
-                                Hint = @NewHint,
-                                Difficulty = @NewDifficulty
-                            WHERE LOWER(Word) = LOWER(@OldWord)";
+            string updateStatement = @"UPDATE WordHints
+                                       SET Word = @NewWord, Hint = @NewHint, Difficulty = @NewDifficulty
+                                       WHERE LOWER(Word) = LOWER(@OldWord)";
 
-            using (var sqlConnection = new SqlConnection(connectionString))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
-                using (var updateCommand = new SqlCommand(updateStatement, sqlConnection))
+                using (SqlCommand updateCommand = new SqlCommand(updateStatement, sqlConnection))
                 {
-                    try
-                    {
-                        updateCommand.Parameters.AddWithValue("@NewWord", updateRequest.NewWord);
-                        updateCommand.Parameters.AddWithValue("@NewHint", updateRequest.NewHint);
-                        updateCommand.Parameters.AddWithValue("@NewDifficulty", updateRequest.NewDifficulty);
-                        updateCommand.Parameters.AddWithValue("@OldWord", oldWord); 
+                    updateCommand.Parameters.AddWithValue("@NewWord", updateRequest.NewWord);
+                    updateCommand.Parameters.AddWithValue("@NewHint", updateRequest.NewHint);
+                    updateCommand.Parameters.AddWithValue("@NewDifficulty", updateRequest.NewDifficulty);
+                    updateCommand.Parameters.AddWithValue("@OldWord", oldWord);
 
-                        sqlConnection.Open();
+                    sqlConnection.Open();
+                    int rowsAffected = updateCommand.ExecuteNonQuery();
 
-                        int rowsAffected = updateCommand.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
-                        {
-                            return true; 
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        return false;
-                    }
+                    return rowsAffected > 0;
                 }
             }
         }
@@ -230,12 +213,10 @@ namespace GuessingGameDataService
         {
             string deleteStatement = "DELETE FROM WordHints WHERE LOWER(Word) = LOWER (@Word)";
 
-            using (var sqlConnection = new SqlConnection (connectionString))
+            using (SqlConnection sqlConnection = new SqlConnection (connectionString))
             {
-                using (var deleteCommand = new SqlCommand(deleteStatement, sqlConnection))
-                {
-                    try
-                    {
+                using (SqlCommand deleteCommand = new SqlCommand(deleteStatement, sqlConnection))
+                {                  
                         deleteCommand.Parameters.AddWithValue("@Word", word);
 
                         sqlConnection.Open();
@@ -249,20 +230,11 @@ namespace GuessingGameDataService
                         else
                         {
                             return false;
-                        }
-                    }
-                    catch(Exception ex)
-                    {
-                        return false;
-                    }
+                        }                    
                 }
             }
         }
 
-        
-
-        
-
-        
+ 
     }
 }

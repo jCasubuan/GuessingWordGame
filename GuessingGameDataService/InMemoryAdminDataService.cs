@@ -14,9 +14,9 @@ namespace GuessingGameDataService
         private Dictionary<string, Player> players => InMemoryPlayerDataService.players;
 
         //READ
-        public bool ValidateAdminLogin(string username, string password)
+        public bool GetAdminAccount(AdminAccount adminAccount)
         {
-            return username == adminUserName && password == adminPassWord;
+            return adminAccount.Username == adminUserName && adminAccount.Password == adminPassWord;
         }
 
         public List<Player> GetAllPlayers()

@@ -55,6 +55,23 @@ namespace GuessingGameDataService
             File.WriteAllText(jsonFilPath, jsonString);
         }
 
+        private bool WordExists(string word)
+        {
+            if (string.IsNullOrWhiteSpace(word))
+            {
+                return false;
+            }
+
+            foreach (var existingWord in wordHints)
+            {
+                if (existingWord.Word.Equals(word, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         //CREATE
         public bool AddWordHint(WordHint newWordHint)
         {
@@ -63,12 +80,9 @@ namespace GuessingGameDataService
                 return false;
             }
 
-            foreach (var existingWord in wordHints)
+            if (WordExists(newWordHint.Word))
             {
-                if (existingWord.Word.Equals(newWordHint.Word, StringComparison.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
+                return false; 
             }
 
             int nextNo = 1;

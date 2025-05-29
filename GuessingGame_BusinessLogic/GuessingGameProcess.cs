@@ -13,8 +13,6 @@ namespace GuessingGame_BusinessLogic
         private int totalLevel = 50;
         private int playerLives = 7;
         private int wrongGuessesInLevel = 0;
-        //private int resetScore = 0;
-
 
         private GameDataService gameDataService;
         private PlayerDataService playerDataService;
@@ -173,9 +171,9 @@ namespace GuessingGame_BusinessLogic
         }
 
         //Admin login
-        public bool ValidateAdminLogin(string username, string password)
+        public bool GetAdminAccount(AdminAccount adminAccount)
         {
-            return adminDataService.ValidateAdminLogin(username, password);
+            return adminDataService.GetAdminAccount(adminAccount);
         }
 
         // topic: Player data, for admin data processsing

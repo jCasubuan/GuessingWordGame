@@ -44,8 +44,8 @@ namespace GuessingGameDataService
             string insertStatement = "INSERT INTO Players (FullName, UserName, Password, Scores, HighScore, LastCompletedLevel) " +
                                      "VALUES (@FullName, @UserName, @Password, @Scores, @HighScore, @LastCompletedLevel)";
 
-            using (var sqlConnection = new SqlConnection(connectionString))
-            using (var insertCommand = new SqlCommand(insertStatement, sqlConnection))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            using (SqlCommand insertCommand = new SqlCommand(insertStatement, sqlConnection))
             {
                 insertCommand.Parameters.AddWithValue("@FullName", player.FullName);
                 insertCommand.Parameters.AddWithValue("@UserName", player.UserName);
@@ -65,8 +65,8 @@ namespace GuessingGameDataService
         {
             string query = "SELECT COUNT(*) FROM Players WHERE UserName = @UserName";
 
-            using (var sqlConnection = new SqlConnection(connectionString))
-            using (var command = new SqlCommand(query, sqlConnection))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(query, sqlConnection))
             {
                 command.Parameters.AddWithValue("@UserName", userName);
 
@@ -81,8 +81,8 @@ namespace GuessingGameDataService
         {
             string query = "SELECT Scores FROM Players WHERE UserName = @UserName";
 
-            using (var sqlConnection = new SqlConnection(connectionString))
-            using (var command = new SqlCommand(query, sqlConnection))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(query, sqlConnection))
             {
                 command.Parameters.AddWithValue("@UserName", userName);
                 sqlConnection.Open();
@@ -100,8 +100,8 @@ namespace GuessingGameDataService
         {
             string query = "SELECT LastCompletedLevel FROM Players WHERE UserName = @UserName";
 
-            using (var sqlConnection = new SqlConnection(connectionString))
-            using ( var command = new SqlCommand(query, sqlConnection))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(query, sqlConnection))
             {
                 command.Parameters.AddWithValue("@UserName", userName );
                 sqlConnection.Open();
@@ -120,8 +120,8 @@ namespace GuessingGameDataService
         {
             string query = "SELECT COUNT(*) FROM Players WHERE UserName = @UserName AND Password = @Password";
 
-            using (var sqlConnection = new SqlConnection(connectionString))
-            using (var command = new SqlCommand( query, sqlConnection))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand( query, sqlConnection))
             {
                 command.Parameters.AddWithValue("@UserName", userName);
                 command.Parameters.AddWithValue("@Password", password);
@@ -134,31 +134,26 @@ namespace GuessingGameDataService
 
         public List<LeaderboardEntry> GetLeaderboard()
         {
-            const string query = "SELECT UserName, HighScore FROM Players WHERE HighScore > 0 ORDER BY HighScore DESC";
+            string query = "SELECT UserName, HighScore FROM Players WHERE HighScore > 0 ORDER BY HighScore DESC";
             var leaderboard = new List<LeaderboardEntry>();
 
-            try
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
-                using (var sqlConnection = new SqlConnection(connectionString))
-                using (var command = new SqlCommand(query, sqlConnection))
+                using (SqlCommand command = new SqlCommand(query, sqlConnection))
                 {
                     sqlConnection.Open();
-                    using (var reader = command.ExecuteReader())
+
+                    using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string userName = reader["UserName"].ToString(); 
+                            string userName = reader["UserName"].ToString();
                             int highScore = Convert.ToInt32(reader["HighScore"]);
 
                             leaderboard.Add(new LeaderboardEntry(userName, highScore));
                         }
                     }
                 }
-            }
-            catch (Exception)
-            {
-                // Log internal error (ex. database connection issues, SQL syntax errors)
-                return new List<LeaderboardEntry>(); 
             }
             AssignPlayerRanks(leaderboard);
             return leaderboard;
@@ -178,8 +173,8 @@ namespace GuessingGameDataService
                             WHERE UserName = @UserName";
 
 
-            using (var sqlConnection = new SqlConnection(connectionString))
-            using ( var command = new SqlCommand( query, sqlConnection) )
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand( query, sqlConnection) )
             {
                 command.Parameters.AddWithValue("@UserName", userName);
                 command.Parameters.AddWithValue("@PointsToAdd", pointsToAdd);
@@ -192,8 +187,8 @@ namespace GuessingGameDataService
         {
             string query = "UPDATE Players SET LastCompletedLevel = @LastCompletedLevel WHERE UserName = @UserName AND LastCompletedLevel < @LastCompletedLevel";
             
-            using (var sqlConnection = new SqlConnection(connectionString))
-            using (var command = new SqlCommand(query,sqlConnection))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(query,sqlConnection))
             {
                 command.Parameters.AddWithValue("@UserName", userName);
                 command.Parameters.AddWithValue("@LastCompletedLevel", lastCompletedLevel);
@@ -207,8 +202,8 @@ namespace GuessingGameDataService
         {
             string query = "UPDATE Players SET Scores = 0 WHERE UserName = @UserName";
 
-            using (var sqlConnection = new SqlConnection( connectionString))
-            using ( var command = new SqlCommand(query, sqlConnection))
+            using (SqlConnection sqlConnection = new SqlConnection( connectionString))
+            using (SqlCommand command = new SqlCommand(query, sqlConnection))
             {
                 command.Parameters.AddWithValue("@UserName", userName);
 

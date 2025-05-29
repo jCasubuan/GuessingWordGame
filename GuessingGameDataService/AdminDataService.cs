@@ -14,14 +14,16 @@ namespace GuessingGameDataService
         public AdminDataService()
         {
             //adminDataService = new InMemoryAdminDataService();
-            adminDataService = new TextFileAdminDataService();
+            //adminDataService = new TextFileAdminDataService();
+            //adminDataService = new JsonFileAdminDataService();
+            adminDataService = new DBAdminDataService();
 
         }
 
         //--- READ ---
-        public bool ValidateAdminLogin(string username, string password)
+        public bool GetAdminAccount(AdminAccount adminAccount)
         {
-            return adminDataService.ValidateAdminLogin(username, password);
+            return adminDataService.GetAdminAccount(adminAccount);
         }
 
         public List<Player> GetAllPlayers()

@@ -15,18 +15,18 @@ namespace GuessingGameDataService
         public PlayerDataService()
         {
             //playerDataService = new InMemoryPlayerDataService();
-            playerDataService = new TextFilePlayerDataService();
+            //playerDataService = new TextFilePlayerDataService();
             //playerDataService = new JsonFilePlayerDataService();
-            //playerDataService = new DBPlayerDataService();
+            playerDataService = new DBPlayerDataService();
         }
 
-        //CREATE
+        //--- CREATE ---
         public bool RegisterPlayer(Player player)
         {
             return playerDataService.RegisterPlayer(player);
         }
 
-        //READ
+        //--- READ ---
         public bool PlayerExists(string userName)
         {
             return playerDataService.PlayerExists(userName);
@@ -52,7 +52,7 @@ namespace GuessingGameDataService
             return playerDataService.GetLeaderboard();
         }
 
-        //UPDATE
+        //--- UPDATE ---
         public void AddToPlayerScore(string userName, int pointsToAdd)
         {
             playerDataService.AddToPlayerScore(userName, pointsToAdd);

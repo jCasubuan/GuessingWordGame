@@ -33,8 +33,6 @@ namespace GuessingWordGame
         {
             DisplayWelcomeMessage();
 
-            //string userName = string.Empty;
-
             bool running = true;
             while (running)
             {
@@ -78,7 +76,6 @@ namespace GuessingWordGame
                 }
             }
         }
-
 
         private static void DisplayWelcomeMessage()
         {
@@ -150,7 +147,7 @@ namespace GuessingWordGame
             DisplayMenuOptions(playerMenu);
         }
 
-        public static void HandleLeaderBoards()
+        private static void HandleLeaderBoards()
         {
             Console.Clear();
             Console.WriteLine("===== Leaderboards =====\n");
@@ -260,7 +257,8 @@ namespace GuessingWordGame
                     return true;
                 }
 
-                if (gameProcess.ValidateAdminLogin(userName, passWord))
+                AdminAccount adminAccount = new AdminAccount { Username = userName, Password = passWord};
+                if (gameProcess.GetAdminAccount(adminAccount))
                 {
                     AdminInterface.DisplayLoggedInAdminMenu(userName);
                     return true;

@@ -20,7 +20,12 @@ namespace GuessingGameCommon
 
         public int HighScore { get; set; }
 
-        public int LastCompletedLevel { get; set; } = 0;       
+        public int LastCompletedLevel { get; set; } = 0;
+
+        public Player()
+        {
+            
+        }
 
         public Player(string fullName, string userName, string password)
         {

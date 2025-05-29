@@ -10,7 +10,7 @@ namespace GuessingGameDataService
     public class TextFileAdminDataService : IAdminDataService
     {
         private string adminFilePath = "adminAccount.txt";
-        private string accountsFilePath = "accounts.txt"; // <- textfile ng player accounts
+        private string accountsFilePath = "accounts.txt"; // <- text file path ng player accounts
         private char Delimiter = '|';
         private int ExpectedFieldCount = 7;
 
@@ -21,9 +21,31 @@ namespace GuessingGameDataService
 
         private void EnsureFileExists()
         {
+            bool adminFileNeedsInitialization = false;
+
             if (!File.Exists(adminFilePath))
             {
-                File.WriteAllText(adminFilePath, "Admin_Jayboy, password");
+                adminFileNeedsInitialization = true;
+            }
+            else
+            {
+                try
+                {
+                    string content = File.ReadAllText(adminFilePath);
+                    if (string.IsNullOrWhiteSpace(content) || !content.Contains(Delimiter))
+                    {
+                        adminFileNeedsInitialization = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    adminFileNeedsInitialization = true;
+                }
+            }
+
+            if (adminFileNeedsInitialization)
+            {
+                File.WriteAllText(adminFilePath, "Admin_Jayboy" + Delimiter + "password");
             }
 
             if (!File.Exists(accountsFilePath))
@@ -61,16 +83,47 @@ namespace GuessingGameDataService
             }
         }
 
+        private List<Player> GetAccounts()
+        {
+            var players = new List<Player>();
+            var lines = File.ReadAllLines(accountsFilePath);
+
+            if (lines.Length == 0)
+                return players;
+
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrEmpty(line))
+                    continue;
+
+                var player = ParsePlayerFromLine(line);
+                if (player != null)
+                    players.Add(player);
+            }
+            return players;
+        }
+
+        private void SaveAllPlayerAccounts(List<Player> players)
+        {
+            var formattedLines = new List<string>();
+            foreach (var player in players)
+            {
+                formattedLines.Add(FormatPlayerData(player));
+            }
+            File.WriteAllLines(accountsFilePath, formattedLines);
+        }
+
 
         //--- READ ---
-        public bool ValidateAdminLogin(string username, string password)
+        public bool GetAdminAccount(AdminAccount adminAccount)
         {
-            string adminFile = File.ReadAllText(adminFilePath);
-            var parts = adminFile.Split(Delimiter);
+            string adminFileContent = File.ReadAllText(adminFilePath);
+            var parts = adminFileContent.Split(Delimiter); // Delimiter is '|'
 
             if (parts.Length == 2)
             {
-                return parts[0].Trim() == username && parts[1].Trim() == password;
+                return parts[0].Trim().Equals(adminAccount.Username, StringComparison.Ordinal) && 
+                       parts[1].Trim().Equals(adminAccount.Password, StringComparison.Ordinal);
             }
             return false;
         }
@@ -101,18 +154,60 @@ namespace GuessingGameDataService
 
         public Player SearchById(int playerId)
         {
-            throw new NotImplementedException();
+            var players = GetAccounts();
+            foreach(var player in players)
+            {
+                if (player.PlayerId == playerId)
+                {
+                    return player;
+                }
+            }
+            return null;
+
         }
 
         public Player SearchByUsername(string userName)
         {
-            throw new NotImplementedException();
+            var players = GetAccounts();
+            foreach(var player in players)
+            {
+                if(player.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return player;
+                }
+            }
+            return null;
         }
 
         //--- DELETE ---
         public bool DeletePlayer(string userName)
-        {
-            throw new NotImplementedException();
+        {   
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return false;
+            }
+
+            var players = GetAccounts();   
+            bool playerFoundAndRemoved = false;
+            
+            for (int i = players.Count - 1; i >= 0; i--)
+            {
+                if (players[i].UserName.Equals(userName, StringComparison.OrdinalIgnoreCase))
+                {
+                    players.RemoveAt(i);
+                    playerFoundAndRemoved = true;
+                }
+            }
+            if (playerFoundAndRemoved)
+            {
+                SaveAllPlayerAccounts(players);
+                return true;
+            }
+
+            else 
+            { 
+                return false; 
+            }
         }
 
     }

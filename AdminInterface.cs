@@ -48,22 +48,6 @@ namespace GuessingWordGame
             "[3] Return to Admin Menu\n"
         };
 
-        private static void DisplayAllPlayersData(GuessingGameProcess gameProcess)
-        {
-            List<Player> allPlayers = gameProcess.GetAllPlayers();
-
-            foreach (var player in allPlayers)
-            {
-                Console.WriteLine($"{player.PlayerId,-5}{player.UserName,-15}{player.FullName,-20}{player.Scores,-10}{player.HighScore}");
-            }
-
-            if (allPlayers.Count == 0)
-            {
-                Console.WriteLine("\n\nNo registered players found.\n");
-            }
-
-        }
-
         private static void DisplayAdminMenu(string userName)
         {
             Console.Clear();
@@ -81,7 +65,7 @@ namespace GuessingWordGame
             Program.DisplayMenuOptions(managePlayers);
         }
 
-        private static void PlayerManager(string userName)
+        private static void PlayerManager()
         {
             bool loggedIn = true;
             while (loggedIn)
@@ -123,6 +107,22 @@ namespace GuessingWordGame
             Console.WriteLine();
             Console.WriteLine();
             Program.WaitForAcknowledgement();
+        }
+
+        private static void DisplayAllPlayersData(GuessingGameProcess gameProcess)
+        {
+            List<Player> allPlayers = gameProcess.GetAllPlayers();
+
+            foreach (var player in allPlayers)
+            {
+                Console.WriteLine($"{player.PlayerId,-5}{player.UserName,-15}{player.FullName,-20}{player.Scores,-10}{player.HighScore}");
+            }
+
+            if (allPlayers.Count == 0)
+            {
+                Console.WriteLine("\n\nNo registered players found.\n");
+            }
+
         }
 
         private static void ViewPlayerStats()
@@ -173,6 +173,19 @@ namespace GuessingWordGame
             Program.WaitForAcknowledgement();
         }
 
+        private static void DeletePlayerWarning()
+        {
+            Console.WriteLine("===== DELETE PLAYER ACCOUNT =====\n");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("WARNING: IRREVERSIBLE ACTION\n");
+            Console.WriteLine("This operation will PERMANENTLY delete the selected player account and ALL associated data.");
+            Console.WriteLine("• - All player progress will be lost.");
+            Console.WriteLine("• - All achievements and statistics will be erased.");
+            Console.WriteLine("• - Account recovery will NOT be possible after deletion.");
+            Console.WriteLine("\nPROCEED WITH EXTREME CAUTION. THIS ACTION CANNOT BE UNDONE.\n");
+            Console.ResetColor();
+        }
+
         private static void DeletePlayerValidation(string usernameToDelete)
         {
             bool confirm = Program.YesNoConfirmation($"\nAre you sure you want to delete '{usernameToDelete}'? This process cannot be undone. (yes/no): ");
@@ -187,29 +200,7 @@ namespace GuessingWordGame
                 Console.WriteLine($"\n\nDeletion cancelled for '{usernameToDelete}'.\n\n");
             }
         }
-
-        private static void DeletePlayerWarning()
-        {
-            Console.WriteLine("===== DELETE PLAYER ACCOUNT =====\n");
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("WARNING: IRREVERSIBLE ACTION\n");
-            Console.WriteLine("This operation will PERMANENTLY delete the selected player account and ALL associated data.");
-            Console.WriteLine("• - All player progress will be lost.");
-            Console.WriteLine("• - All achievements and statistics will be erased.");
-            Console.WriteLine("• - Account recovery will NOT be possible after deletion.");
-            Console.WriteLine("\nPROCEED WITH EXTREME CAUTION. THIS ACTION CANNOT BE UNDONE.\n");
-            Console.ResetColor();
-        }      
-        
-        private static void DisplayManageWordOptions()
-        {
-            Console.Clear();
-            Console.WriteLine("===== Manage Words =====\n");
-
-            Program.DisplayMenuOptions(manageWords);
-
-        }
-      
+                               
         private static void WordManager()
         {
             bool loggedIn = true;
@@ -249,7 +240,15 @@ namespace GuessingWordGame
 
             }
         }
-        
+        private static void DisplayManageWordOptions()
+        {
+            Console.Clear();
+            Console.WriteLine("===== Manage Words =====\n");
+
+            Program.DisplayMenuOptions(manageWords);
+
+        }
+
         private static void ViewAllWords(GuessingGameProcess gameProcess)
         {
             List<WordHint> wordsToGuess = gameProcess.GetWordHints();
@@ -471,7 +470,6 @@ namespace GuessingWordGame
             Program.WaitForAcknowledgement();
         }
 
-        //--- DELETE ---
         private static void DeleteWord()
         {
             Console.Clear();
@@ -522,7 +520,7 @@ namespace GuessingWordGame
             }
         }
         
-        // --- READ --- 
+
         private static void DisplayLeaderboardToolOptions()
         {
             Console.Clear();
@@ -626,7 +624,7 @@ namespace GuessingWordGame
                 switch (optionsInput)
                 {
                     case 1:
-                        PlayerManager(userName);
+                        PlayerManager();
                         break;
 
                     case 2:

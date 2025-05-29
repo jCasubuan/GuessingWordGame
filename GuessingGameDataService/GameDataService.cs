@@ -14,18 +14,18 @@ namespace GuessingGameDataService
         public GameDataService() 
         {
             //gameDataService = new InMemoryGameDataService();
-            gameDataService = new TextFileGameDataService();
+            //gameDataService = new TextFileGameDataService();
             //gameDataService = new JsonFileGameDataService();
-            //gameDataService = new DBGameDataService();
+            gameDataService = new DBGameDataService();
         }
 
-        //CREATE
+        //--- CREATE ---
         public bool AddWordHint(WordHint newWordHint)
         {
             return gameDataService.AddWordHint(newWordHint);
         }
 
-        //READ
+        //--- READ ---
         public IReadOnlyList<WordHint> GetAllWordHints()
         {
             return gameDataService.GetAllWordHints();
@@ -37,13 +37,13 @@ namespace GuessingGameDataService
 
         }
 
-        //UPDATE
+        //--- UPDATE --- 
         public bool UpdateWord(string oldWord, WordUpdateRequest updateRequest)
         {
             return gameDataService.UpdateWord(oldWord, updateRequest);
         }
 
-        //DELETE
+        //--- DELETE ---
         public bool DeleteWord(string word)
         {
             return gameDataService.DeleteWord(word);

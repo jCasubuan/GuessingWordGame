@@ -520,7 +520,6 @@ namespace GuessingWordGame
             }
         }
         
-
         private static void DisplayLeaderboardToolOptions()
         {
             Console.Clear();

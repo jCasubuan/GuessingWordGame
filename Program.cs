@@ -79,56 +79,53 @@ namespace GuessingWordGame
 
         private static void DisplayWelcomeMessage()
         {
-            string gameTitle = ">>> GUESS IT! <<<";
-            string welcomeMessage = "Welcome to the Best Word Guessing Game of all time!";
-            string separator = "------------------------------------------------";
-            string prompt = "Press any key to continue...";
-            string loading = "Loading...";
-            string pleaseWait = "Please wait...";
+            //Console.Clear();
+            PrintEmptyLines(3);
+            Console.WriteLine(CenterConsoleText(GameConstants.GameTitle));      
+            Console.WriteLine();
+            Console.WriteLine(CenterConsoleText(GameConstants.Separator));
+            Console.WriteLine(CenterConsoleText(GameConstants.WelcomeMessage));
+            Console.WriteLine(CenterConsoleText(GameConstants.Separator));
 
-            Console.Clear();
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine(CenterConsoleText(gameTitle));      
-            Console.WriteLine();
-            Console.WriteLine(CenterConsoleText(separator));
-            Console.WriteLine(CenterConsoleText(welcomeMessage));
-            Console.WriteLine(CenterConsoleText(separator));
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.Write(CenterConsoleText(prompt));
-            Console.ReadKey();
+            PrintEmptyLines(4);
+            Console.Write(CenterConsoleText(GameConstants.PressAnyKeyPrompt));
+            Console.ReadKey(true);
             Console.WriteLine();
 
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine(CenterConsoleText(loading));
+            PrintEmptyLines(5);
+            Console.WriteLine(CenterConsoleText(GameConstants.LoadingMessage));
             Thread.Sleep(1000);
             Console.WriteLine();
-            Console.WriteLine(CenterConsoleText(pleaseWait));
+            Console.WriteLine(CenterConsoleText(GameConstants.PleaseWaitMessage));
             Thread.Sleep(1700);
-            Console.Clear();
         }
 
         private static string CenterConsoleText(string text)
         {
-            return text.PadLeft((Console.WindowWidth + text.Length) / 2);
+            if (string.IsNullOrEmpty(text))
+            {
+                return new string(' ', Console.WindowWidth); 
+            }
+
+            int consoleWidth = Console.WindowWidth;
+            if (text.Length >= consoleWidth)
+            {
+                return text; 
+            }
+
+            int padding = (consoleWidth - text.Length) / 2;
+            return new string(' ', padding) + text;
         }
 
-        public static void DisplayMenuOptions(string[] menuOptions)
+        private static void PrintEmptyLines(int count)
         {
-            foreach (var action in menuOptions)
+            for (int i = 0; i < count; i++)
             {
-                Console.WriteLine(action);
+                Console.WriteLine();
             }
         }
 
+        
         private static void DisplayMainMenu()
         {
             Console.Clear();
@@ -159,58 +156,17 @@ namespace GuessingWordGame
             Console.WriteLine();
             WaitForAcknowledgement();
         }
-
-        public static void HandleLeaderboardContents(bool showEmptyMesssage = true)
-        {
-            var leaderboard = gameProcess.GetLeaderboard();
-
-            if (leaderboard.Count == 0)
-            {
-                Console.WriteLine("Nothing to show right now.\n");
-
-                if (showEmptyMesssage)
-                { 
-                    Console.WriteLine("Play your first game and see how you rank on the leaderboards!\n\n");
-                };
-            }
-            else
-            {
-                foreach (var entry in leaderboard)
-                {
-                    Console.WriteLine($"{entry.Rank}\t{entry.UserName}\t\t{entry.HighScore}");
-                }
-            }
-        }
-
-        public static void WaitForAcknowledgement()
-        {
-            Console.Write("Type \"ok\" to continue: ");
-            string input;
-
-            do
-            {
-                input = Console.ReadLine()?.ToLower();
-                if (input != "ok")
-                {
-                    Console.Write("\nPlease type \"ok\" to continue: ");
-                }
-            } while (input != "ok");
-            Console.WriteLine();
-        }
-        
-        private static void DisplayLevelInfo(int playerLives, List<char> guessedWord, string userName, string hint, string difficulty, int currentLevel) 
+                
+        private static void DisplayLevelInfo(LevelDisplayData data) 
         {           
-            int score = gameProcess.GetPlayerScore(userName);
-            string category = "IT related terminologies";
-
             Console.Clear();
             Console.WriteLine($"===== Guess it!: Word Guessing Game =====");
-            Console.WriteLine($"\nLEVEL: {currentLevel}\n");
-            Console.WriteLine($"Your lives remaining: {playerLives} | Points: {score}\n");
-            Console.WriteLine($"Category: {category}");
-            Console.WriteLine($"Difficulty: {difficulty}");
-            Console.WriteLine($"\nHint: {hint}");
-            Console.WriteLine("\nWord to guess: " + string.Join(" ", guessedWord)); // for better spacing           
+            Console.WriteLine($"\nLEVEL: {data.CurrentLevel}\n");
+            Console.WriteLine($"Your lives remaining: {data.PlayerLives} | Points: {data.PlayerScore}\n");
+            Console.WriteLine($"Category: {data.Category}");
+            Console.WriteLine($"Difficulty: {data.Difficulty}");
+            Console.WriteLine($"\nHint: {data.Hint}");
+            Console.WriteLine("\nWord to guess: " + string.Join(" ", data.GuessedWord)); // for better spacing           
         }
 
         private static void ViewPoints(string userName)
@@ -365,36 +321,7 @@ namespace GuessingWordGame
                         break;                         
                 }
             }   
-        }      
-
-        public static bool ConfirmLogout(string userName)
-        {
-            return YesNoConfirmation($"Are you sure you want to log out, {userName}? (yes/no): ");
-        }
-
-        public static bool ConfirmExit()
-        {
-            return YesNoConfirmation("Are you sure you want to exit? (yes/no): ");
-        }
-
-        public static string AcceptNonEmptyInput(string displayText)
-        {
-            string userInput;
-
-            do
-            {
-                Console.Write(displayText);
-                userInput = Console.ReadLine()?.Trim();
-
-                if (string.IsNullOrWhiteSpace(userInput))
-                {
-                    Console.WriteLine("Your input CANNOT be empty! Please try again.\n");
-                }
-            }
-            while (string.IsNullOrWhiteSpace(userInput));
-
-            return userInput;
-        }
+        }                     
 
         private static string AcceptNonEmptyPassword(string displayText)
         {
@@ -518,7 +445,18 @@ namespace GuessingWordGame
 
             while (gameProcess.PlayerLives > 0) 
             {
-                DisplayLevelInfo(gameProcess.PlayerLives, guessedWord, userName, hint, difficulty,currentLevel); 
+                LevelDisplayData levelDisplayData = new LevelDisplayData
+                {
+                    PlayerLives = gameProcess.PlayerLives,
+                    GuessedWord = guessedWord,
+                    UserName = userName,
+                    Hint = hint,
+                    Difficulty = difficulty,
+                    CurrentLevel = currentLevel,
+                    PlayerScore = gameProcess.GetPlayerScore(userName)
+                };
+
+                DisplayLevelInfo(levelDisplayData);
 
                 char guessedLetter = GetValidGuess();
                 bool correctGuess = gameProcess.ProcessPlayerGuess(wordToGuess, guessedWord, guessedLetter);
@@ -610,33 +548,7 @@ namespace GuessingWordGame
             Console.WriteLine($"Your current score: {score} points.\n\n");
 
             WaitForAcknowledgement();
-        }
-
-        public static int GetOptionsInput(string displayText, int minOption, int maxOption)
-        {
-            int userInput;
-
-            while (true)
-            {
-                Console.Write(displayText);
-
-                if (int.TryParse(Console.ReadLine()?.Trim(), out userInput))
-                {
-                    if (userInput >= minOption && userInput <= maxOption)
-                    {
-                        return userInput;
-                    }
-                    else
-                    {
-                        Console.WriteLine($"\nInvalid input. Please enter a number between {minOption} and {maxOption}.\n");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("\nInvalid input. Please enter a valid number.\n");
-                }
-            }
-        }
+        }      
 
         private static char GetValidGuess()
         {
@@ -672,26 +584,7 @@ namespace GuessingWordGame
         {
             Console.WriteLine(message);
             Console.WriteLine();
-        }
-
-        public static bool YesNoConfirmation(string displayText)
-        {
-            string input;
-
-            do
-            {
-                Console.Write(displayText);
-                input = Console.ReadLine()?.Trim().ToLower();
-
-                if (input != "yes" && input != "no")
-                {
-                    Console.WriteLine("Invalid input. Please enter 'yes' or 'no'.\n");
-                }
-            }
-            while (input != "yes" && input != "no");
-
-            return input == "yes";
-        }  
+        }       
 
         private static void ShowGameMechanics()
         {
@@ -814,7 +707,7 @@ namespace GuessingWordGame
 
             if (continueGame)
             {
-                StartGameFromLevel(userName, lastLevel);
+                LoadSavedGame(userName, lastLevel);
             }
             else
             {
@@ -822,7 +715,7 @@ namespace GuessingWordGame
             }
         }
 
-        private static bool StartGameFromLevel(string userName, int startLevel) // variant of StartGame(), for the load game process,
+        private static bool LoadSavedGame(string userName, int startLevel) // variant of StartGame(), for the load game process,
                                                                         // separate from the main flow of the game where all data are fresh
         {
             IReadOnlyList<WordHint> wordHints = gameProcess.GetWordHints();
@@ -902,6 +795,125 @@ namespace GuessingWordGame
             WaitForAcknowledgement();
         }
 
+        public static void DisplayMenuOptions(string[] menuOptions)
+        {
+            foreach (var action in menuOptions)
+            {
+                Console.WriteLine(action);
+            }
+        }
 
+        public static void HandleLeaderboardContents(bool showEmptyMesssage = true)
+        {
+            var leaderboard = gameProcess.GetLeaderboard();
+
+            if (leaderboard.Count == 0)
+            {
+                Console.WriteLine("Nothing to show right now.\n");
+
+                if (showEmptyMesssage)
+                {
+                    Console.WriteLine("Play your first game and see how you rank on the leaderboards!\n\n");
+                }
+                ;
+            }
+            else
+            {
+                foreach (var entry in leaderboard)
+                {
+                    Console.WriteLine($"{entry.Rank}\t{entry.UserName}\t\t{entry.HighScore}");
+                }
+            }
+        }
+
+        public static void WaitForAcknowledgement()
+        {
+            Console.Write("Type \"ok\" to continue: ");
+            string input;
+
+            do
+            {
+                input = Console.ReadLine()?.ToLower();
+                if (input != "ok")
+                {
+                    Console.Write("\nPlease type \"ok\" to continue: ");
+                }
+            } while (input != "ok");
+            Console.WriteLine();
+        }
+
+        public static bool ConfirmLogout(string userName)
+        {
+            return YesNoConfirmation($"Are you sure you want to log out, {userName}? (yes/no): ");
+        }
+
+        public static bool ConfirmExit()
+        {
+            return YesNoConfirmation("Are you sure you want to exit? (yes/no): ");
+        }
+
+        public static string AcceptNonEmptyInput(string displayText)
+        {
+            string userInput;
+
+            do
+            {
+                Console.Write(displayText);
+                userInput = Console.ReadLine()?.Trim();
+
+                if (string.IsNullOrWhiteSpace(userInput))
+                {
+                    Console.WriteLine("Your input CANNOT be empty! Please try again.\n");
+                }
+            }
+            while (string.IsNullOrWhiteSpace(userInput));
+
+            return userInput;
+        }
+
+        public static int GetOptionsInput(string displayText, int minOption, int maxOption)
+        {
+            int userInput;
+
+            while (true)
+            {
+                Console.Write(displayText);
+
+                if (int.TryParse(Console.ReadLine()?.Trim(), out userInput))
+                {
+                    if (userInput >= minOption && userInput <= maxOption)
+                    {
+                        return userInput;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\nInvalid input. Please enter a number between {minOption} and {maxOption}.\n");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("\nInvalid input. Please enter a valid number.\n");
+                }
+            }
+        }
+
+        public static bool YesNoConfirmation(string displayText)
+        {
+            string input;
+
+            do
+            {
+                Console.Write(displayText);
+                input = Console.ReadLine()?.Trim().ToLower();
+
+                if (input != "yes" && input != "no")
+                {
+                    Console.WriteLine("Invalid input. Please enter 'yes' or 'no'.\n");
+                }
+            }
+            while (input != "yes" && input != "no");
+
+            return input == "yes";
+        }
     }
 }

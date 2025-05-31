@@ -148,13 +148,13 @@ namespace GuessingGameDataService
             }
         }
 
-        
-
-        
-
-        
-
-        
-        
+        public void ResetPlayerProgress(string userName)
+        {
+            if (players.ContainsKey(userName))
+            {
+                players[userName].LastCompletedLevel = 0;
+                players[userName].Scores = 0;
+            }
+        }
     }
 }

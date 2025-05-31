@@ -68,6 +68,11 @@ namespace GuessingGameDataService
             playerDataService.ResetPlayerScore(userName);
         }
 
+        public void ResetPlayerProgress(string userName)
+        {
+            playerDataService.ResetPlayerProgress(userName);
+        }
+
 
 
     }

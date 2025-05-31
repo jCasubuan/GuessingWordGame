@@ -559,9 +559,6 @@ namespace GuessingWordGame
         {
             Console.Clear();
             Console.WriteLine("===== Leaderboards =====\n");
-            Console.WriteLine("Rank\tUsername\tScore");
-            Console.WriteLine("-----------------------------\n");
-
             Program.HandleLeaderboardContents(showEmptyMesssage: false);
 
             Console.WriteLine();

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using GuessingGame_BusinessLogic;
+using GuessingGameCommon;
+using Microsoft.Data.SqlClient.DataClassification;
+using System;
 using System.Reflection.Emit;
 using System.Reflection.Metadata;
-using GuessingGame_BusinessLogic;
-using GuessingGameCommon;
 using static System.Formats.Asn1.AsnWriter;
 
 namespace GuessingWordGame
@@ -79,7 +80,6 @@ namespace GuessingWordGame
 
         private static void DisplayWelcomeMessage()
         {
-            //Console.Clear();
             PrintEmptyLines(3);
             Console.WriteLine(CenterConsoleText(GameConstants.GameTitle));      
             Console.WriteLine();
@@ -124,8 +124,7 @@ namespace GuessingWordGame
                 Console.WriteLine();
             }
         }
-
-        
+       
         private static void DisplayMainMenu()
         {
             Console.Clear();
@@ -148,9 +147,6 @@ namespace GuessingWordGame
         {
             Console.Clear();
             Console.WriteLine("===== Leaderboards =====\n");
-            Console.WriteLine("Rank\tUsername\tScore");
-            Console.WriteLine("-----------------------------\n");
-
             HandleLeaderboardContents();
 
             Console.WriteLine();
@@ -191,7 +187,7 @@ namespace GuessingWordGame
             if (!loginSuccss)
             {
                 Console.Write("Press any key to continue...");
-                Console.ReadKey();
+                Console.ReadKey(true);
             }
         }
 
@@ -275,6 +271,11 @@ namespace GuessingWordGame
             return AcceptNonEmptyPassword("Enter your password: ");
         }
 
+        private static bool ConfirmExit()
+        {
+            return YesNoConfirmation("Are you sure you want to exit? (yes/no): ");
+        }
+
         private static void DisplayLoggedInMenu(string userName)
         {
             bool loggedIn = true;
@@ -289,7 +290,7 @@ namespace GuessingWordGame
                 switch (optionsInput)
                 {
                     case 1:
-                        StartGame(userName);
+                        HandleStartNewGame(userName);
                         break;
                             
                     case 2:
@@ -366,12 +367,26 @@ namespace GuessingWordGame
             return password;
         }
 
+        private static void HandleStartNewGame(string userName)
+        {
+            int lastLevel = gameProcess.GetLastCompletedLevel(userName);
+
+            if (lastLevel > 0)
+            {
+                StartingOverAgain(userName, lastLevel);
+            }
+            else
+            {
+                StartGame(userName);
+            }
+        }
+
         private static bool StartGame(string userName)
         {
             IReadOnlyList<WordHint> wordHints = gameProcess.GetWordHints();
             int totalLevel = gameProcess.TotalLevel; 
 
-            Console.Clear();
+            Console.Clear();           
 
             gameProcess.ResetPlayerScore(userName);
 
@@ -400,43 +415,91 @@ namespace GuessingWordGame
 
                     if (!guessedCorrectly)
                     {
-                        bool tryAgain = YesNoConfirmation("Do you want to try again? (yes/no): ");
-                        Console.WriteLine();
-
-                        if (!tryAgain)
+                        bool playerTryAgain = RetryLevel(level, userName);
+                        if (!playerTryAgain)
                         {
-                            if (level == 0)
-                            {
-                                ExitOnFirstTry(userName); // method calling
-
-                            }
-                            else
-                            {
-                                ExitMidGameLosing( userName); // method calling                               
-                            }
-                            return false; // return to main menu
+                            return false;
                         }
 
                         gameProcess.ResetLives(); // Reset lives if they choose to try again
                     }
                 }
-
-                if (guessedCorrectly)
-                {
+                
                     int earnedPoints = gameProcess.CalculateScoreForLevel();
                     gameProcess.AddToPlayerScore(userName, earnedPoints);
-
                     gameProcess.UpdatePlayerLevelProgress(userName, level + 1); // for saved game, delete this if it causes load game bugs
 
                     if (!HandleLevelProgression(userName, level, totalLevel))
                     {
                         return false; 
-                    }
-                }
+                    }               
             }
 
             EndGameMessage(userName); // Game completed successfully
             return false; // After full game completion, return to menu
+        }
+
+        private static bool RetryLevel(int level, string userName)
+        {
+            bool tryAgain = YesNoConfirmation("Do you want to try again? (yes/no): ");
+            Console.WriteLine();
+
+            if (!tryAgain)
+            {
+                if (level == 0)
+                {
+                    ExitOnFirstTry(userName);                
+                }
+                else
+                {
+                    ExitMidGameLosing(userName);                            
+                }
+                return false; // return to main menu
+            }
+            return true;
+        }
+
+        private static void StartingOverAgain(string userName, int lastLevel)
+        {   
+            if (HandleFullCompletionRestart(userName, lastLevel))
+            {
+                return;
+            }
+
+            Console.WriteLine($"Welcome back, {userName}");
+            Console.WriteLine($"You left off at Level {lastLevel} with {gameProcess.GetPlayerScore(userName)} points.");
+            Console.WriteLine("Are you really sure you want to restart from the very beginning?");
+            Console.WriteLine("\nWARNING: This action CANNOT be undone.");
+            bool startOverAgain = YesNoConfirmation("All your saved progress will be lost (yes/no): ");
+
+            if (startOverAgain)
+            {
+                gameProcess.ResetPlayerScore(userName);
+                gameProcess.ResetPlayerProgress(userName);
+                StartGame(userName);
+            }
+            else
+            {
+                Console.WriteLine("\nReturning to player menu...\n");
+            }
+        }
+
+        private static bool HandleFullCompletionRestart(string userName, int lastLevel)
+        {
+            int totalLevelsInGame = gameProcess.TotalLevel;
+
+            if (lastLevel == totalLevelsInGame)
+            {
+                Console.WriteLine($"\nWelcome back, {userName}!");
+                Console.WriteLine("Congratulations! You've already conquered all levels in the game!");
+                Console.WriteLine("Starting a brand new game for you from Level 1...\n");
+
+                gameProcess.ResetPlayerScore(userName);
+                gameProcess.ResetPlayerProgress(userName);
+                StartGame(userName); 
+                return true;
+            }
+            return false;
         }
 
         private static bool PlayLevel(string userName, string wordToGuess, string hint, string difficulty,int currentLevel,int totalLevel)
@@ -477,14 +540,22 @@ namespace GuessingWordGame
             return CheckLevelResult(guessedWord, wordToGuess);
         }
 
-        private static bool HandleLevelProgression(string userName, int level, int totalLevel)
+        private static bool HandleLevelProgression(string userName, int currentLevel, int totalLevel)
         {
             int earnedPoints = gameProcess.CalculateScoreForLevel();
             int wrongGuesses = gameProcess.GetWrongGuessesInLevel();
             int totalPlayerScore = gameProcess.GetPlayerScore(userName);
 
             DisplayLevelProgression(earnedPoints, wrongGuesses, totalPlayerScore);
-            return PromptNextLevel(userName);
+
+            if (currentLevel < totalLevel - 1)
+            {
+                return PromptNextLevel(userName);
+            }
+            else
+            {
+                return true;
+            }
         }
 
         private static void DisplayLevelProgression(int earnedPoints, int wrongGuesses, int totalPlayerScore)
@@ -715,8 +786,7 @@ namespace GuessingWordGame
             }
         }
 
-        private static bool LoadSavedGame(string userName, int startLevel) // variant of StartGame(), for the load game process,
-                                                                        // separate from the main flow of the game where all data are fresh
+        private static bool LoadSavedGame(string userName, int startLevel) 
         {
             IReadOnlyList<WordHint> wordHints = gameProcess.GetWordHints();
             int totalLevel = gameProcess.TotalLevel;
@@ -768,7 +838,7 @@ namespace GuessingWordGame
                 {
                     int earnedPoints = gameProcess.CalculateScoreForLevel();
                     gameProcess.AddToPlayerScore(userName, earnedPoints);
-                    gameProcess.UpdatePlayerLevelProgress(userName, level); // Save progress
+                    gameProcess.UpdatePlayerLevelProgress(userName, level + 1); // Save progress
 
                     if (!HandleLevelProgression(userName, level, totalLevel))
                     {
@@ -785,6 +855,7 @@ namespace GuessingWordGame
         {
             int score = gameProcess.GetPlayerScore(userName);
 
+            Console.Clear();
             Console.WriteLine("====================================================");
             Console.WriteLine($"CONGRATULATIONS, {userName}!");
             Console.WriteLine($"You completed all levels!");
@@ -809,21 +880,23 @@ namespace GuessingWordGame
 
             if (leaderboard.Count == 0)
             {
+                Console.WriteLine($"{"Rank",-10}{"Username",-20}{"High Score"}");
+                Console.WriteLine(new string('-', 38));
                 Console.WriteLine("Nothing to show right now.\n");
 
                 if (showEmptyMesssage)
                 {
                     Console.WriteLine("Play your first game and see how you rank on the leaderboards!\n\n");
                 }
-                ;
             }
             else
             {
                 foreach (var entry in leaderboard)
                 {
-                    Console.WriteLine($"{entry.Rank}\t{entry.UserName}\t\t{entry.HighScore}");
+                    Console.WriteLine($"{entry.Rank, -10}{entry.UserName, -20}{entry.HighScore}");
                 }
             }
+            Console.WriteLine();
         }
 
         public static void WaitForAcknowledgement()
@@ -845,12 +918,7 @@ namespace GuessingWordGame
         public static bool ConfirmLogout(string userName)
         {
             return YesNoConfirmation($"Are you sure you want to log out, {userName}? (yes/no): ");
-        }
-
-        public static bool ConfirmExit()
-        {
-            return YesNoConfirmation("Are you sure you want to exit? (yes/no): ");
-        }
+        }     
 
         public static string AcceptNonEmptyInput(string displayText)
         {

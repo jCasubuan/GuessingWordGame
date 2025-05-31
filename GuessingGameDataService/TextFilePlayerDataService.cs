@@ -295,6 +295,19 @@ namespace GuessingGameDataService
             }
         }
 
-
+        public void ResetPlayerProgress(string userName)
+        {
+            var players = GetAccounts();
+            foreach (var player in players)
+            {
+                if (player.UserName == userName)
+                {
+                    player.LastCompletedLevel = 0;
+                    player.Scores = 0;
+                    UpdatePlayerInFile(player);
+                    break;
+                }
+            }
+        }
     }
 }

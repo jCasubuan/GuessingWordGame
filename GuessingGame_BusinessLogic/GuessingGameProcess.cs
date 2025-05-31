@@ -10,7 +10,7 @@ namespace GuessingGame_BusinessLogic
 {
     public class GuessingGameProcess
     {
-        private int totalLevel = 50;
+        private int totalLevel = 25;
         private int playerLives = 7;
         private int wrongGuessesInLevel = 0;
 
@@ -111,6 +111,11 @@ namespace GuessingGame_BusinessLogic
         public void ResetPlayerScore(string userName)
         {
             playerDataService.ResetPlayerScore(userName);
+        }
+
+        public void ResetPlayerProgress(string userName)
+        {
+            playerDataService.ResetPlayerProgress(userName);
         }
 
         public List<WordHint> GetWordHints()

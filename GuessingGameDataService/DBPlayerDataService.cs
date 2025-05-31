@@ -211,5 +211,21 @@ namespace GuessingGameDataService
                 command.ExecuteNonQuery();
             }
         }
+
+        public void ResetPlayerProgress(string userName)
+        {
+            string query = "UPDATE Players SET LastCompletedLevel = 0, Scores = 0 WHERE UserName = @UserName";
+
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(query,sqlConnection))
+                {
+                    command.Parameters.AddWithValue("@UserName", userName);
+
+                    sqlConnection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

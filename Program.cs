@@ -383,6 +383,8 @@ namespace GuessingWordGame
 
         private static bool StartGame(string userName)
         {
+            ShowLoadingBar("Loading your Adventure...");
+            
             IReadOnlyList<WordHint> wordHints = gameProcess.GetWordHints();
             int totalLevel = gameProcess.TotalLevel; 
 
@@ -459,6 +461,34 @@ namespace GuessingWordGame
             return true;
         }
 
+        private static void ShowLoadingBar(string message)
+        {
+            Console.Clear();
+            int consoleWidth = Console.WindowWidth;
+            int totalBlocks = 20;
+
+            Console.WriteLine("\n\n\n\n\n");
+
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                string centeredMessage = message.PadLeft((consoleWidth + message.Length) / 2);
+                Console.WriteLine(centeredMessage + "\n");
+            }
+
+            // Show the loading bar
+            for (int i = 0; i <= totalBlocks; i++)
+            {
+                string bar = $"[{new string('#', i)}{new string(' ', totalBlocks - i)}] {i * 5}%";
+                string centeredBar = bar.PadLeft((consoleWidth + bar.Length) / 2);
+
+                Console.Write("\r" + centeredBar);
+                Thread.Sleep(250);
+            }
+
+            Console.WriteLine();
+            Thread.Sleep(700);
+        }
+
         private static void StartingOverAgain(string userName, int lastLevel)
         {   
             if (HandleFullCompletionRestart(userName, lastLevel))
@@ -469,7 +499,9 @@ namespace GuessingWordGame
             Console.WriteLine($"Welcome back, {userName}");
             Console.WriteLine($"You left off at Level {lastLevel} with {gameProcess.GetPlayerScore(userName)} points.");
             Console.WriteLine("Are you really sure you want to restart from the very beginning?");
-            Console.WriteLine("\nWARNING: This action CANNOT be undone.");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nWARNING: This action CANNOT be undone!");
+            Console.ResetColor();
             bool startOverAgain = YesNoConfirmation("All your saved progress will be lost (yes/no): ");
 
             if (startOverAgain)
@@ -477,10 +509,6 @@ namespace GuessingWordGame
                 gameProcess.ResetPlayerScore(userName);
                 gameProcess.ResetPlayerProgress(userName);
                 StartGame(userName);
-            }
-            else
-            {
-                Console.WriteLine("\nReturning to player menu...\n");
             }
         }
 
@@ -659,7 +687,7 @@ namespace GuessingWordGame
 
         private static void ShowGameMechanics()
         {
-            const string objective = "Objective:";
+            const string objective = "Objective: ";
             const string gameRules = "Game Rules:";
             const string scoringSystem = "Scoring System:";
             const string hints = "Hints:";
@@ -669,12 +697,12 @@ namespace GuessingWordGame
             Console.WriteLine("Welcome to the Word Guessing Game! Here's everything you need to know to play and enjoy:");
 
             PrintSection(objective,
-                "Guess the hidden word letter by letter before you run out of lives!");
+                "Guess the hidden word, letter by letter before you run out of lives!");
             PrintSection(gameRules,
                 "\n- Start with 7 lives\n" +
                 "- Each incorrect guess costs 1 life\n" +
                 "- Correct guesses reveal letters in the word\n" +
-                "- Complete all 50 levels to win");
+                "- Complete all 25 levels to win");
             PrintSection(scoringSystem,
                 "\n- Base of 10 points for each level\n" +
                 "- minus(-) 1 point for each wrong guess in a level\n" +
@@ -788,6 +816,8 @@ namespace GuessingWordGame
 
         private static bool LoadSavedGame(string userName, int startLevel) 
         {
+            ShowLoadingBar("Resuming your Adventure...");
+
             IReadOnlyList<WordHint> wordHints = gameProcess.GetWordHints();
             int totalLevel = gameProcess.TotalLevel;
 
@@ -878,11 +908,12 @@ namespace GuessingWordGame
         {
             var leaderboard = gameProcess.GetLeaderboard();
 
+            Console.WriteLine($"{"Rank",-10}{"Username",-20}{"High Score"}");
+            Console.WriteLine(new string('-', 45));
+
             if (leaderboard.Count == 0)
             {
-                Console.WriteLine($"{"Rank",-10}{"Username",-20}{"High Score"}");
-                Console.WriteLine(new string('-', 38));
-                Console.WriteLine("Nothing to show right now.\n");
+                Console.WriteLine("\nNothing to show right now.\n");
 
                 if (showEmptyMesssage)
                 {

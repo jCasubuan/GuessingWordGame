@@ -13,11 +13,10 @@ namespace GuessingGameDataService
 
         public AdminDataService()
         {
-            adminDataService = new InMemoryAdminDataService();
-            //adminDataService = new TextFileAdminDataService();
+            //adminDataService = new InMemoryAdminDataService();
+            adminDataService = new TextFileAdminDataService();
             //adminDataService = new JsonFileAdminDataService();
             //adminDataService = new DBAdminDataService();
-
         }
 
         //--- READ ---

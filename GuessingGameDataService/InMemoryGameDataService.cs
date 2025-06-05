@@ -43,8 +43,11 @@ namespace GuessingGameDataService
             wordsToGuess.Add(new WordHint("query", "Request for information from a database", "medium"));
             wordsToGuess.Add(new WordHint("devops", "Combining software development and IT operations", "medium"));
             wordsToGuess.Add(new WordHint("variable", "Named storage location for data in programming", "easy")); // 25
-
-
+            wordsToGuess.Add(new WordHint("terminal", "Text interface for entering commands", "medium"));
+            wordsToGuess.Add(new WordHint("polymorphism", "OOP concept where objects can take different forms", "medium"));
+            wordsToGuess.Add(new WordHint("authentication", "Process of verifying user identity", "easy"));
+            wordsToGuess.Add(new WordHint("abstraction", "Hiding implementation details of a system", "medium"));
+            wordsToGuess.Add(new WordHint("hard disk drive", "Non-volatile storage device for data", "medium")); // 30
         }
 
         private bool DoesWordExist(string word) // method pang chek kung ang word ay nasa list collection

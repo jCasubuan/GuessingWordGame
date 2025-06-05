@@ -10,7 +10,7 @@ namespace GuessingGame_BusinessLogic
 {
     public class GuessingGameProcess
     {
-        private int totalLevel = 25;
+        private int totalLevel = 30;
         private int playerLives = 7;
         private int wrongGuessesInLevel = 0;
 

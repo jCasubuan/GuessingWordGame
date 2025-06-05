@@ -702,7 +702,7 @@ namespace GuessingWordGame
                 "\n- Start with 7 lives\n" +
                 "- Each incorrect guess costs 1 life\n" +
                 "- Correct guesses reveal letters in the word\n" +
-                "- Complete all 25 levels to win");
+                "- Complete all 30 levels to win");
             PrintSection(scoringSystem,
                 "\n- Base of 10 points for each level\n" +
                 "- minus(-) 1 point for each wrong guess in a level\n" +

@@ -10,12 +10,15 @@
   <ItemGroup>
     <Compile Remove="GuessingGameCommon\**" />
     <Compile Remove="GuessingGameDataService\**" />
+    <Compile Remove="GuessingGameDesktop\**" />
     <Compile Remove="GuessingGame_BusinessLogic\**" />
     <EmbeddedResource Remove="GuessingGameCommon\**" />
     <EmbeddedResource Remove="GuessingGameDataService\**" />
+    <EmbeddedResource Remove="GuessingGameDesktop\**" />
     <EmbeddedResource Remove="GuessingGame_BusinessLogic\**" />
     <None Remove="GuessingGameCommon\**" />
     <None Remove="GuessingGameDataService\**" />
+    <None Remove="GuessingGameDesktop\**" />
     <None Remove="GuessingGame_BusinessLogic\**" />
   </ItemGroup>
 

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="GuessingGameCommon">
+      <HintPath>..\GuessingGameCommon\bin\Debug\net8.0\GuessingGameCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="GuessingGame_BusinessLogic">
+      <HintPath>..\GuessingGame_BusinessLogic\bin\Debug\net8.0\GuessingGame_BusinessLogic.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

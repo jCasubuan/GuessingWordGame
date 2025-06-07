@@ -17,10 +17,10 @@ namespace GuessingGameDataService
         WordHint SearchForWord(string word);
 
         //UPDATE
-        public bool UpdateWord(string oldWord, WordUpdateRequest updateRequest);
+        bool UpdateWord(string oldWord, WordUpdateRequest updateRequest);
 
         //DELETE
-        public bool DeleteWord(string word);
+        bool DeleteWord(string word);
 
 
     }

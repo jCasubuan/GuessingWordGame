@@ -13,6 +13,8 @@ namespace GuessingGame_BusinessLogic
         private int totalLevel = 30;
         private int playerLives = 7;
         private int wrongGuessesInLevel = 0;
+        private int loginAttempts = 0;
+        private int maximumAttempts = 3;
 
         private GameDataService gameDataService;
         private PlayerDataService playerDataService;
@@ -174,6 +176,15 @@ namespace GuessingGame_BusinessLogic
         {
             return playerDataService.GetLastCompletedLevel(userName);
         }
+
+        // login attempts
+        //public bool HandleLoginAttempts()
+        //{
+        //    string userName = "";
+        //    string passWord = "";
+
+        //    while(loginAttempts < )
+        //}
 
         //Admin login
         public bool GetAdminAccount(AdminAccount adminAccount)

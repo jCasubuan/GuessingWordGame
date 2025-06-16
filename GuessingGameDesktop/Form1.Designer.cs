@@ -83,27 +83,27 @@
             // 
             // btnLogin
             // 
-            btnLogin.Font = new Font("Segoe UI", 16F, FontStyle.Bold, GraphicsUnit.Point, 0); 
-            btnLogin.Location = new Point(172, 481);
+            btnLogin.BackColor = Color.FromArgb(0, 119, 212);
+            btnLogin.FlatStyle = FlatStyle.Flat;
+            btnLogin.Font = new Font("Segoe UI", 16F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnLogin.ForeColor = Color.White;
+            btnLogin.Location = new Point(172, 451);
             btnLogin.Name = "btnLogin";
-            btnLogin.Size = new Size(254, 67); 
+            btnLogin.Size = new Size(254, 67);
             btnLogin.TabIndex = 5;
             btnLogin.Text = "Login";
-            btnLogin.BackColor = Color.FromArgb(0, 119, 212);
-            btnLogin.ForeColor = Color.White;
-            btnLogin.UseVisualStyleBackColor = false; 
-            btnLogin.FlatStyle = FlatStyle.Flat;
-            btnLogin.FlatAppearance.BorderSize = 0;
+            btnLogin.UseVisualStyleBackColor = false;
             btnLogin.Click += btnLogin_Click;
             // 
             // btnBack
             // 
-            btnBack.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnBack.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnBack.ForeColor = Color.FromArgb(0, 119, 212);
             btnBack.Location = new Point(32, 612);
             btnBack.Name = "btnBack";
             btnBack.Size = new Size(111, 34);
             btnBack.TabIndex = 6;
-            btnBack.Text = "< BACK";
+            btnBack.Text = "< Back";
             btnBack.UseVisualStyleBackColor = true;
             btnBack.Click += btnBack_Click;
             // 

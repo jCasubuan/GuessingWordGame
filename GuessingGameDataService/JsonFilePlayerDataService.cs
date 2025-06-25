@@ -8,9 +8,9 @@ namespace GuessingGameDataService
 {
     public class JsonFilePlayerDataService : IPlayerDataService
     {   
-        private List<Player> players;
+        private static List<Player> players;
         //private string jsonFilePath = "accounts.json";
-        private string jsonFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "accounts.json");
+        private static string jsonFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "accounts.json");
 
         public JsonFilePlayerDataService()
         {

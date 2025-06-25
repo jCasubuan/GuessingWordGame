@@ -134,7 +134,7 @@ namespace GuessingGameDataService
 
         public List<LeaderboardEntry> GetLeaderboard()
         {
-            string query = "SELECT UserName, HighScore FROM Players WHERE HighScore > 0 ORDER BY HighScore DESC";
+            string query = "SELECT PlayerId, UserName, HighScore FROM Players WHERE HighScore > 0 ORDER BY HighScore DESC";
             var leaderboard = new List<LeaderboardEntry>();
 
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
@@ -147,10 +147,11 @@ namespace GuessingGameDataService
                     {
                         while (reader.Read())
                         {
+                            int playerId = Convert.ToInt32(reader["PlayerId"]);
                             string userName = reader["UserName"].ToString();
                             int highScore = Convert.ToInt32(reader["HighScore"]);
 
-                            leaderboard.Add(new LeaderboardEntry(userName, highScore));
+                            leaderboard.Add(new LeaderboardEntry(playerId, userName, highScore));
                         }
                     }
                 }

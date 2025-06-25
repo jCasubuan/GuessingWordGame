@@ -4,7 +4,7 @@ using GuessingGameCommon;
 namespace GuessingGameDesktop
 {
     public partial class frmLogin : Form
-    {
+    {   
         public frmLogin()
         {
             InitializeComponent();
@@ -30,7 +30,7 @@ namespace GuessingGameDesktop
             {
                 MessageBox.Show("Player Login Successful!", "Success",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
-                //this.Close();
+                this.Close();
                 return;
             }
 
@@ -40,9 +40,12 @@ namespace GuessingGameDesktop
 
                 if (gameProcess.GetAdminAccount(adminAttempt))
                 {
-                    MessageBox.Show("Welcome, Admin!", "Admin Login Successful",
+                    MessageBox.Show($"Welcome, {txtUserName.Text}!", "Admin Login Successful",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    //this.Close();
+
+                    this.Close();
+                    frmAdminMenu adminMenu = new frmAdminMenu();
+                    adminMenu.Show();
                     return;
                 }
                 else
@@ -57,9 +60,10 @@ namespace GuessingGameDesktop
 
         private void btnBack_Click(object sender, EventArgs e)
         {
-            // frmMainMenu mainMenu = new frmMainMenu(); 
-            // mainMenu.Show();
-            //this.Close();
+            this.Close();
+            frmMainMenu mainMenu = Application.OpenForms.OfType<frmMainMenu>().FirstOrDefault();
+            mainMenu.Show();
+            //Hide();
         }
     }
 }

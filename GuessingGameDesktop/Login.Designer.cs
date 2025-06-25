@@ -90,7 +90,7 @@
             btnLogin.Location = new Point(172, 451);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(254, 67);
-            btnLogin.TabIndex = 5;
+            btnLogin.TabIndex = 5;  
             btnLogin.Text = "Login";
             btnLogin.UseVisualStyleBackColor = false;
             btnLogin.Click += btnLogin_Click;

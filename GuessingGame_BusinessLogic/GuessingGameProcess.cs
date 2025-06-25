@@ -108,22 +108,7 @@ namespace GuessingGame_BusinessLogic
         public void ResetWrongGuesses()
         {
             wrongGuessesInLevel = 0;
-        }
-
-        public void ResetPlayerScore(string userName)
-        {
-            playerDataService.ResetPlayerScore(userName);
-        }
-
-        public void ResetPlayerProgress(string userName)
-        {
-            playerDataService.ResetPlayerProgress(userName);
-        }
-
-        public List<WordHint> GetWordHints()
-        {
-            return gameDataService.GetAllWordHints().ToList();
-        }
+        }         
 
         //logic for tracking wrong guesses
         public void IncrementWrongGuesses()
@@ -136,9 +121,16 @@ namespace GuessingGame_BusinessLogic
             return wrongGuessesInLevel;
         }
 
-        public List<LeaderboardEntry> GetLeaderboard()
+        // for player data
+        public bool RegisterPlayer(string fullName, string userName, string password)
         {
-            return playerDataService.GetLeaderboard();
+            Player newPlayer = new Player(fullName, userName, password);
+            return playerDataService.RegisterPlayer(newPlayer);
+        }
+
+        public bool PlayerExists(string userName)
+        {
+            return playerDataService.PlayerExists(userName);
         }
 
         public int GetPlayerScore(string userName)
@@ -146,21 +138,20 @@ namespace GuessingGame_BusinessLogic
             return playerDataService.GetPlayerScore(userName);
         }
 
+        public int GetLastCompletedLevel(string userName)
+        {
+            return playerDataService.GetLastCompletedLevel(userName);
+        }
+
         public bool VerifyLogin(string userName, string passWord)
         {
             return playerDataService.GetPlayerByCredentials(userName, passWord);
         }
 
-        public bool PlayerExists (string userName)
+        public List<LeaderboardEntry> GetLeaderboard()
         {
-            return playerDataService.PlayerExists(userName);
-        }
-
-        public bool RegisterPlayer(string fullName, string userName, string password)
-        {
-            Player newPlayer = new Player(fullName, userName, password);
-            return playerDataService.RegisterPlayer(newPlayer);
-        }
+            return playerDataService.GetLeaderboard();
+        }      
 
         public void AddToPlayerScore(string userName, int pointsToAdd)
         {
@@ -172,47 +163,25 @@ namespace GuessingGame_BusinessLogic
             playerDataService.UpdatePlayerLevelProgress(userName, lastCompletedLevel);
         }
 
-        public int GetLastCompletedLevel(string userName)
+        public void ResetPlayerScore(string userName)
         {
-            return playerDataService.GetLastCompletedLevel(userName);
+            playerDataService.ResetPlayerScore(userName);
         }
 
-        // login attempts
-        //public bool HandleLoginAttempts()
-        //{
-        //    string userName = "";
-        //    string passWord = "";
-
-        //    while(loginAttempts < )
-        //}
-
-        //Admin login
-        public bool GetAdminAccount(AdminAccount adminAccount)
+        public void ResetPlayerProgress(string userName)
         {
-            return adminDataService.GetAdminAccount(adminAccount);
+            playerDataService.ResetPlayerProgress(userName);
         }
 
-        // topic: Player data, for admin data processsing
-        public List<Player> GetAllPlayers()
+        //for word data
+        public List<WordHint> GetWordHints()
         {
-            return adminDataService.GetAllPlayers();
+            return gameDataService.GetAllWordHints().ToList();
         }
 
-        public Player SearchPlayerByInput(string adminInput)
-        {           
-           if (int.TryParse(adminInput, out int playerId))
-           {
-                return adminDataService.SearchById(playerId);
-           }
-            else
-            {   
-                return adminDataService.SearchByUsername(adminInput);
-            }
-        }
-
-        public bool DeletePlayer(string userName)
-        {            
-            return adminDataService.DeletePlayer(userName);
+        public bool WordExists(string word)
+        {
+            return gameDataService.SearchForWord(word) != null;
         }
 
         public WordHint SearchForWord(string word)
@@ -287,7 +256,34 @@ namespace GuessingGame_BusinessLogic
             return gameDataService.DeleteWord(word);
         }
 
+        //Admin login
+        public bool GetAdminAccount(AdminAccount adminAccount)
+        {
+            return adminDataService.GetAdminAccount(adminAccount);
+        }
 
+        // topic: Player data, for admin data processsing
+        public List<Player> GetAllPlayers()
+        {
+            return adminDataService.GetAllPlayers();
+        }
+
+        public Player SearchPlayerByInput(string adminInput)
+        {
+            if (int.TryParse(adminInput, out int playerId))
+            {
+                return adminDataService.SearchById(playerId);
+            }
+            else
+            {
+                return adminDataService.SearchByUsername(adminInput);
+            }
+        }
+
+        public bool DeletePlayer(string userName)
+        {
+            return adminDataService.DeletePlayer(userName);
+        }
 
 
     }

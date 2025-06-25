@@ -1,0 +1,212 @@
+[
+  {
+    "ID": 0,
+    "No": 1,
+    "Word": "NEW_MOTHERBOARD",
+    "Hint": "NEW_HINT",
+    "Difficulty": "extra hard"
+  },
+  {
+    "ID": 0,
+    "No": 2,
+    "Word": "database",
+    "Hint": "Structured collection of data",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 3,
+    "Word": "ping",
+    "Hint": "Network diagnostic tool for measuring latency",
+    "Difficulty": "easy"
+  },
+  {
+    "ID": 0,
+    "No": 4,
+    "Word": "recursion",
+    "Hint": "Programming technique where a function calls itself",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 5,
+    "Word": "cache memory",
+    "Hint": "High-speed memory for frequently accessed data",
+    "Difficulty": "hard"
+  },
+  {
+    "ID": 0,
+    "No": 6,
+    "Word": "tokenization",
+    "Hint": "Process of replacing sensitive data with tokens",
+    "Difficulty": "extra hard"
+  },
+  {
+    "ID": 0,
+    "No": 7,
+    "Word": "encryption",
+    "Hint": "Technique for securing data through coding",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 8,
+    "Word": "firewall",
+    "Hint": "Security system that controls network traffic",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 9,
+    "Word": "bandwidth",
+    "Hint": "Maximum data transfer rate of a network",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 10,
+    "Word": "algorithm",
+    "Hint": "Step-by-step procedure for solving a problem",
+    "Difficulty": "easy"
+  },
+  {
+    "ID": 0,
+    "No": 11,
+    "Word": "bitrate",
+    "Hint": "Amount of data processed per second in a stream",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 12,
+    "Word": "syntax",
+    "Hint": "Rules defining correct structure in programming",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 13,
+    "Word": "iteration",
+    "Hint": "Repetition of a process or loop",
+    "Difficulty": "easy"
+  },
+  {
+    "ID": 0,
+    "No": 14,
+    "Word": "latency",
+    "Hint": "Time delay in data transmission",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 15,
+    "Word": "debugging",
+    "Hint": "Process of finding and fixing code errors",
+    "Difficulty": "easy"
+  },
+  {
+    "ID": 0,
+    "No": 16,
+    "Word": "malware",
+    "Hint": "Software designed to damage or disrupt systems",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 17,
+    "Word": "phishing",
+    "Hint": "Fraudulent attepmt to obtain sensitive information",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 18,
+    "Word": "compiler",
+    "Hint": "Tool that translates code into executable form",
+    "Difficulty": "easy"
+  },
+  {
+    "ID": 0,
+    "No": 19,
+    "Word": "protocol",
+    "Hint": "Set of rules for data communication",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 20,
+    "Word": "virutal machine",
+    "Hint": "Software emulation of a physical computer",
+    "Difficulty": "hard"
+  },
+  {
+    "ID": 0,
+    "No": 21,
+    "Word": "scalability",
+    "Hint": "Ability of system to handle growing workload",
+    "Difficulty": "hard"
+  },
+  {
+    "ID": 0,
+    "No": 22,
+    "Word": "processor",
+    "Hint": "Brain of a computer that executes instructions",
+    "Difficulty": "easy"
+  },
+  {
+    "ID": 0,
+    "No": 23,
+    "Word": "query",
+    "Hint": "Request for information from a database",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 24,
+    "Word": "devops",
+    "Hint": "Combining software development and IT operations",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 25,
+    "Word": "variable",
+    "Hint": "Named storage location for data in programming",
+    "Difficulty": "easy"
+  },
+  {
+    "ID": 0,
+    "No": 26,
+    "Word": "terminal",
+    "Hint": "Text interface for entering commands",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 27,
+    "Word": "polymorphism",
+    "Hint": "OOP concept where objects can take different forms",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 28,
+    "Word": "authentication",
+    "Hint": "Process of verifying user identity",
+    "Difficulty": "easy"
+  },
+  {
+    "ID": 0,
+    "No": 29,
+    "Word": "abstraction",
+    "Hint": "Hiding implementation details of a system",
+    "Difficulty": "medium"
+  },
+  {
+    "ID": 0,
+    "No": 30,
+    "Word": "hard disk drive",
+    "Hint": "Non-volatile storage device for data",
+    "Difficulty": "medium"
+  }
+]

@@ -44,7 +44,7 @@ namespace GuessingGameDataService
         {
             List<Player> players = new List<Player>();
 
-            string query = "SELECT PlayerId, Username, FullName, Scores, HighScore FROM Players";
+            string query = "SELECT PlayerId, Username, FullName, Scores, HighScore, LastCompletedLevel FROM Players";
 
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
@@ -61,7 +61,8 @@ namespace GuessingGameDataService
                                 UserName = reader["Username"].ToString(),
                                 FullName = reader["FullName"].ToString(),
                                 Scores = Convert.ToInt32(reader["Scores"]),
-                                HighScore = Convert.ToInt32(reader["HighScore"])
+                                HighScore = Convert.ToInt32(reader["HighScore"]),
+                                LastCompletedLevel = Convert.ToInt32(reader["LastCompletedLevel"])
                             };
                             players.Add(player);
                         }

@@ -12,8 +12,13 @@ namespace GuessingGameCommon
         public string NewHint { get; set; }
         public string NewDifficulty { get; set; }
 
-        public WordUpdateRequest(string newWord, string newHint, string newDiffictuly) 
-        { 
+        public WordUpdateRequest()
+        {
+            
+        }
+
+        public WordUpdateRequest(string newWord, string newHint, string newDiffictuly)
+        {
             NewWord = newWord;
             NewHint = newHint;
             NewDifficulty = newDiffictuly;

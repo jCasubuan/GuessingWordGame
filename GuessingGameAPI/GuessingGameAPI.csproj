@@ -1,24 +1,32 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="GuessingGameCommon">
       <HintPath>..\GuessingGame_BusinessLogic\bin\Debug\net8.0\GuessingGameCommon.dll</HintPath>
     </Reference>
+    <Reference Include="GuessingGameDataService">
+      <HintPath>..\GuessingGame_BusinessLogic\bin\Debug\net8.0\GuessingGameDataService.dll</HintPath>
+    </Reference>
     <Reference Include="GuessingGame_BusinessLogic">
       <HintPath>..\GuessingGame_BusinessLogic\bin\Debug\net8.0\GuessingGame_BusinessLogic.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="accounts.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

@@ -58,26 +58,64 @@ namespace GuessingGameAPI.Controllers
             return gameProcess.GetLeaderboard();
         }
 
-        //[HttpPatch("players/{username}/score")]
-        //public bool AddToPlayerScore(string userName, [FromQuery]int points)
-        //{
-        //    if (string.IsNullOrWhiteSpace(userName) || userName.ToLower() == "string")
-        //    {
-        //        return false; 
-        //    }
+        [HttpPatch("players/{username}/score")] 
+        public bool AddToPlayerScore(string userName, int points)
+        {
+            if (string.IsNullOrWhiteSpace(userName) || userName.ToLower() == "string")
+            {
+                return false;
+            }
 
-        //    if (points == 0) 
-        //    {
-        //        return false; 
-        //    }
+            if (points == 0)
+            {
+                return false;
+            }
 
-        //    gameProcess.AddToPlayerScore(userName, points);
+            gameProcess.AddToPlayerScore(userName, points);
 
-        //    return true;
-        //}
+            return true;
+        }
 
-        //[HttpPatch("UpdateLevel")]
-        //public 
+        [HttpPatch("players/{username}/level")]
+        public bool UpdatePlayerLevel(string userName, int level)
+        {
+            if (string.IsNullOrWhiteSpace(userName) || userName.ToLower() == "string")
+            {
+                return false;
+            } 
+
+            if ( level < 0)
+            {
+                return false;
+            }
+
+            gameProcess.UpdatePlayerLevelProgress(userName, level);
+            return true;
+        }
+
+        [HttpPatch("players/{username}/reset-score")]
+        public bool ResetPlayerScore(string userName)
+        {
+            if (string.IsNullOrWhiteSpace(userName) || userName.ToLower() == "string")
+            {
+                return false; 
+            }
+
+            gameProcess.ResetPlayerProgress(userName);
+            return true;
+        }
+
+        [HttpPatch("players/{userName}/reset-progress")]
+        public bool ResetPlayerProgress(string userName)
+        {
+            if (string.IsNullOrWhiteSpace(userName) || userName.ToLower() == "string")
+            {
+                return false;
+            }
+
+            gameProcess.ResetPlayerProgress(userName);
+            return true;
+        }
 
         [HttpGet("WordHints")]
         public IEnumerable<WordHint> GetWordHints()

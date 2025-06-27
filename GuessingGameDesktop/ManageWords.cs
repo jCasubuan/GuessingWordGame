@@ -276,20 +276,41 @@ namespace GuessingGameDesktop
             if (foundWord != null)
             {
                 filteredList.Add(foundWord);
+                LoadWordGridView(filteredList);
+                btnClearFilter.Enabled = true;
             }
-
-            LoadWordGridView(filteredList);
-
-            if (filteredList.Count == 0)
+            else // No word found
             {
-                MessageBox.Show($"No Word found matching {searchWord}.",
+                MessageBox.Show($"No Word found matching '{searchWord}'.", // Added quotes for clarity in message
                     "No result",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                btnClearFilter.Enabled = true;
-                dgvWords.ClearSelection();
-                dgvWords_SelectionChanged(this, EventArgs.Empty);
+                // Explicitly clear the grid and columns without loading anything
+                dgvWords.DataSource = null;
+                dgvWords.Columns.Clear();
+
+                btnClearFilter.Enabled = true; // Still allow clearing the filter
             }
+
+            // These lines can be placed here once to ensure consistent state after any search
+            dgvWords.ClearSelection();
+            dgvWords_SelectionChanged(this, EventArgs.Empty);
+
+
+            //if (filteredList.Count == 0)
+            //{
+            //    MessageBox.Show($"No Word found matching {searchWord}.",
+            //        "No result",
+            //        MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            //    btnClearFilter.Enabled = true;
+            //    dgvWords.ClearSelection();
+            //    dgvWords_SelectionChanged(this, EventArgs.Empty);
+            //}
+
+            //btnClearFilter.Enabled = true;
+            //dgvWords.ClearSelection();
+            //dgvWords_SelectionChanged(this, EventArgs.Empty);
 
         }
 

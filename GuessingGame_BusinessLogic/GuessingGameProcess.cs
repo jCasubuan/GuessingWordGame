@@ -135,8 +135,12 @@ namespace GuessingGame_BusinessLogic
 
         public int GetPlayerScore(string userName)
         {
-            return playerDataService.GetPlayerScore(userName);
-        }
+            int score = playerDataService.GetPlayerScore(userName);
+
+            EmailService email = new EmailService();
+            email.SendEmail(userName);
+            return score;
+        } 
 
         public int GetLastCompletedLevel(string userName)
         {

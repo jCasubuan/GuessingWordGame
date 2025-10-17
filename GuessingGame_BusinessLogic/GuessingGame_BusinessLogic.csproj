@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.14.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\GuessingGameCommon\GuessingGameCommon.csproj" />
     <ProjectReference Include="..\GuessingGameDataService\GuessingGameDataService.csproj" />
   </ItemGroup>

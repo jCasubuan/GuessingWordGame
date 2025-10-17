@@ -47,7 +47,7 @@ namespace GuessingGameAPI.Controllers
         }
 
         [HttpGet("VerifyLogin/{userName}/{password}")]
-        public bool GetPlayerByCredentials(string userName, string password)
+        public bool GetPlayerAccount(string userName, string password)
         {
             return gameProcess.VerifyLogin(userName, password);
         }
